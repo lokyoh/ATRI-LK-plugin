@@ -30,6 +30,7 @@ plugin = (
     .type(Service.ServiceType.SUBSCRIBE)
     .permission(ADMIN)
     .main_cmd("/rss.rsshub")
+    .version("1.0.0")
 )
 
 add_sub = plugin.cmd_as_group("add", "为本群添加 RSSHub 订阅")

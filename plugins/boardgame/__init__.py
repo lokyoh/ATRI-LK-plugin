@@ -28,7 +28,7 @@ usage：
         发送“结束下棋”结束当前棋局
 """.strip()
 
-plugin = Service("棋类游戏").document(__plugin_usage__).type(Service.ServiceType.GAME)
+plugin = Service("棋类游戏").document(__plugin_usage__).type(Service.ServiceType.GAME).version("1.0.0")
 
 game_intro = plugin.on_command(cmd="棋类游戏介绍", docs="介绍规则")
 

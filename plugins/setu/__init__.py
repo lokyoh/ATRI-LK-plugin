@@ -18,7 +18,7 @@ from ATRI.system.lkbot.util import lk_util
 
 from .data_source import Setu
 
-plugin = Service("涩图").document("hso!").main_cmd("/setu").type(Service.ServiceType.ENTERTAINMENT)
+plugin = Service("涩图").document("hso!").main_cmd("/setu").type(Service.ServiceType.ENTERTAINMENT).version("1.0.0")
 
 random_setu = plugin.on_command(
     "来张涩图", "来张随机涩图，冷却2分钟", aliases={"涩图来", "来点涩图", "来份涩图"}, priority=5

@@ -10,7 +10,7 @@ from nonebot.params import CommandArg
 
 from ATRI.service import Service
 
-plugin = Service("MC服务器").document("查看MC服务器状态").type(Service.ServiceType.FUNCTION)
+plugin = Service("MC服务器").document("查看MC服务器状态").type(Service.ServiceType.FUNCTION).version("1.0.0")
 
 _lmt_notice = ["慢...慢一..点❤", "冷静1下", "歇会歇会~~", "呜呜...别急", "太快了...受不了", "不要这么快呀"]
 

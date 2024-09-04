@@ -13,8 +13,8 @@ from ATRI.system.lkbot.util import lk_util
 
 from .team_data import team_manager, check_manager, time_type
 
-plugin = Service("组队插件").document("l_o_o_k的组队插件v1.0.0").type(Service.ServiceType.FUNCTION).main_cmd(
-    "/team")
+plugin = Service("组队插件").document("l_o_o_k的组队插件v1.0.0").type(Service.ServiceType.FUNCTION).version(
+    "1.0.0").main_cmd("/team")
 
 _lmt_notice = ["慢...慢一..点❤", "冷静1下", "歇会歇会~~", "呜呜...别急", "太快了...受不了", "不要这么快呀"]
 

@@ -11,7 +11,8 @@ from ATRI import TEXT_DIR
 from ATRI.service import Service
 from ATRI.system.lkbot import lk_util
 
-daily_fa_dian = Service("每日发癫").document("不每天对Ta发癫很难受呀！").type(Service.ServiceType.ENTERTAINMENT)
+daily_fa_dian = Service("每日发癫").document("不每天对Ta发癫很难受呀！").type(Service.ServiceType.ENTERTAINMENT).version(
+    "1.0.0")
 
 fa_dian = daily_fa_dian.on_command("每日发癫", docs="不每天对Ta发癫很难受呀！")
 

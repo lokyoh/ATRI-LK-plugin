@@ -20,7 +20,8 @@ from ATRI.utils.apscheduler import scheduler
 
 from .data_source import AntiEffort, PLUGIN_DIR
 
-plugin = Service("谁是卷王").document("谁是卷王!").type(Service.ServiceType.ENTERTAINMENT).main_cmd("/ae")
+plugin = Service("谁是卷王").document("谁是卷王!").type(Service.ServiceType.ENTERTAINMENT).main_cmd("/ae").version(
+    "1.0.0")
 ae = AntiEffort()
 
 _lmt_notice = choice(["慢...慢一..点❤", "冷静1下", "歇会歇会~~", "呜呜...别急"])

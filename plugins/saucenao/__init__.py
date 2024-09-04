@@ -9,7 +9,7 @@ from ATRI.service import Service, ServiceTools
 
 from .data_source import SauceNAO
 
-plugin = Service("以图搜图").document("以图搜图，仅限二刺螈").type(Service.ServiceType.FUNCTION)
+plugin = Service("以图搜图").document("以图搜图，仅限二刺螈").type(Service.ServiceType.FUNCTION).version("1.0.0")
 
 _search_flmt_notice = choice(["慢...慢一..点❤", "冷静1下", "歇会歇会~~"])
 

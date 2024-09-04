@@ -11,7 +11,8 @@ from ATRI.utils.apscheduler import scheduler
 
 from .data_source import Kimo
 
-plugin = Service("kimo").document("好像有点涩?").type(Service.ServiceType.ENTERTAINMENT).rule(to_bot()).priority(996)
+plugin = Service("kimo").document("好像有点涩?").type(Service.ServiceType.ENTERTAINMENT).version("1.0.0").rule(
+    to_bot()).priority(996)
 
 _chat_flmt_notice = ["慢...慢一..点❤", "冷静1下", "歇会歇会~~", "我开始为你以后的伴侣担心了..."]
 

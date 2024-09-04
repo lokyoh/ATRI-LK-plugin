@@ -16,7 +16,7 @@ from ATRI.utils.apscheduler import scheduler
 from ATRI.log import log
 from ATRI.utils import request
 
-plugin = Service("每日新闻").document("订阅每日新闻服务").type(Service.ServiceType.FUNCTION)
+plugin = Service("每日新闻").document("订阅每日新闻服务").type(Service.ServiceType.FUNCTION).version("1.0.0")
 
 url = "http://dwz.2xb.cn/zaob"
 _lmt_notice = ["慢...慢一..点❤", "冷静1下", "歇会歇会~~", "呜呜...别急", "太快了...受不了", "不要这么快呀"]

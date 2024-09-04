@@ -7,7 +7,8 @@ from ATRI import RECORD_DIR
 from ATRI.service import Service
 from ATRI.system.lkbot.tools.rec_editor import RECEditor
 
-ding_gong = Service("钉宫语录").document("骂我 发送一条钉宫语录").type(Service.ServiceType.ENTERTAINMENT)
+ding_gong = Service("钉宫语录").document("骂我 发送一条钉宫语录").type(Service.ServiceType.ENTERTAINMENT).version(
+    "1.0.0")
 
 dg_voice = ding_gong.on_command("骂我", docs="爽！再来一句！")
 

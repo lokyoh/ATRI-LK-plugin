@@ -11,7 +11,7 @@ from ATRI.log import log
 from ATRI.utils.img_editor import get_image_bytes
 from ATRI.utils import request
 
-plugin = Service("coser").document("三次元也不戳，嘿嘿嘿").type(Service.ServiceType.ENTERTAINMENT)
+plugin = Service("coser").document("三次元也不戳，嘿嘿嘿").type(Service.ServiceType.ENTERTAINMENT).version("1.0.0")
 
 coser = plugin.on_regex(r"^(\d)?连?(cos|COS|coser|括丝)$",
                         docs="指令：\n?N连cos/coser\n示例：cos\n示例：5连cos （单次请求张数小于9）", priority=5, block=True)

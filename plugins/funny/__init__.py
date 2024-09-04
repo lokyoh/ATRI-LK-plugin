@@ -9,7 +9,7 @@ from ATRI.service import Service
 
 from .data_source import Funny
 
-plugin = Service("乐").document("乐1乐, 莫当真").type(Service.ServiceType.ENTERTAINMENT)
+plugin = Service("乐").document("乐1乐, 莫当真").type(Service.ServiceType.ENTERTAINMENT).version("1.0.0")
 
 get_laugh = plugin.on_command("来句笑话", "隐晦的笑话...")
 

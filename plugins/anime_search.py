@@ -73,7 +73,8 @@ class Anime:
         return msg0
 
 
-plugin = Service("以图搜番").document("通过一张图片搜索你需要的番！据说里*也可以").type(Service.ServiceType.FUNCTION)
+plugin = Service("以图搜番").document("通过一张图片搜索你需要的番！据说里*也可以").type(
+    Service.ServiceType.FUNCTION).version("1.0.0")
 
 anime_search = plugin.on_command("以图搜番", "发送一张图以搜索可能的番剧")
 
