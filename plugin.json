@@ -1,0 +1,163 @@
+{
+    "lk聊天": {
+        "path": "plugins.lkchat",
+        "docs": "lk插件处理聊天的部分",
+        "version": "0.1.0",
+        "author": "l_o_o_k",
+        "is_dir": true
+    },
+    "lk农场": {
+        "path": "plugins.lkfarm",
+        "docs": "l_o_o_k的农场插件",
+        "version": "0.1.0",
+        "author": "l_o_o_k",
+        "is_dir": true
+    },
+    "lk宠物": {
+        "path": "plugins.lkpet",
+        "docs": "l_o_o_k的赛博宠物插件",
+        "version": "0.1.3-fix1",
+        "author": "l_o_o_k",
+        "is_dir": true
+    },
+    "谁是卷王": {
+        "path": "plugins.anti_effort",
+        "docs": "谁是卷王!",
+        "version": "1.0.0",
+        "author": "Kyomotoi",
+        "is_dir": true
+    },
+    "b站动态订阅": {
+        "path": "plugins.bilibili_dynamic",
+        "docs": "b站动态订阅助手~",
+        "version": "1.0.0",
+        "author": "Kyomotoi",
+        "is_dir": true
+    },
+    "棋类游戏": {
+        "path": "plugins.boardgame",
+        "docs": "usage：\n    棋类游戏\n    指令：\n        @bot + “五子棋”、“黑白棋”、“围棋”开始一局游戏;\n        再发送“落子 字母+数字”下棋，如“落子 A1”;\n        发送“结束下棋”结束当前棋局",
+        "version": "0.1.0",
+        "author": "xipesoy",
+        "is_dir": true
+    },
+    "乐": {
+        "path": "plugins.funny",
+        "docs": "乐1乐, 莫当真",
+        "version": "1.0.0",
+        "author": "Kyomotoi",
+        "is_dir": true
+    },
+    "kimo": {
+        "path": "plugins.kimo",
+        "docs": "好像有点涩?",
+        "version": "1.0.0",
+        "author": "Kyomotoi",
+        "is_dir": true
+    },
+    "拍立得": {
+        "path": "plugins.polaroid",
+        "docs": "根据头像生成拍立得风格照片！",
+        "version": "1.0.0",
+        "author": "Kyomotoi",
+        "is_dir": true
+    },
+    "rss.mikan": {
+        "path": "plugins.rss.rss_mikanan",
+        "docs": "Rss的mikan支持",
+        "version": "1.0.0",
+        "author": "Kyomotoi",
+        "is_dir": true
+    },
+    "rss.rsshub": {
+        "path": "plugins.rss.rss_rsshub",
+        "docs": "Rss的Rsshub支持",
+        "version": "1.0.0",
+        "author": "Kyomotoi",
+        "is_dir": true
+    },
+    "以图搜图": {
+        "path": "plugins.saucenao",
+        "docs": "以图搜图，仅限二刺螈",
+        "version": "1.0.0",
+        "author": "Kyomotoi",
+        "is_dir": true
+    },
+    "涩图": {
+        "path": "plugins.setu",
+        "docs": "hso!",
+        "version": "1.0.0",
+        "author": "Kyomotoi, l_o_o_k",
+        "is_dir": true
+    },
+    "组队插件": {
+        "path": "plugins.team",
+        "docs": "l_o_o_k的组队插件",
+        "version": "1.0.0",
+        "author": "l_o_o_k",
+        "is_dir": true
+    },
+    "词库管理": {
+        "path": "plugins.thesaurus",
+        "docs": "支持模糊匹配、全匹配、正则的自定义回复~\n支持分群、全局管理, 支持群内投票添加",
+        "version": "1.0.0",
+        "author": "Kyomotoi",
+        "is_dir": true
+    },
+    "小工具": {
+        "path": "plugins.util",
+        "docs": "非常实用(?)的工具们!",
+        "version": "1.0.0",
+        "author": "Kyomotoi",
+        "is_dir": true
+    },
+    "以图搜番": {
+        "path": "plugins.anime_search",
+        "docs": "通过一张图片搜索你需要的番！据说里*也可以",
+        "version": "1.0.0",
+        "author": "Kyomotoi",
+        "is_dir": false
+    },
+    "coser": {
+        "path": "plugins.coser",
+        "docs": "三次元也不戳，嘿嘿嘿",
+        "version": "1.0.0",
+        "author": "l_o_o_k",
+        "is_dir": false
+    },
+    "每日新闻": {
+        "path": "plugins.dailynews",
+        "docs": "订阅每日新闻服务",
+        "version": "1.0.0",
+        "author": "l_o_o_k",
+        "is_dir": false
+    },
+    "钉宫语录": {
+        "path": "plugins.dinggong",
+        "docs": "骂我 发送一条钉宫语录",
+        "version": "1.0.0",
+        "author": "l_o_o_k",
+        "is_dir": false
+    },
+    "每日发癫": {
+        "path": "plugins.fadian",
+        "docs": "不每天对Ta发癫很难受呀！",
+        "version": "1.0.0",
+        "author": "l_o_o_k",
+        "is_dir": false
+    },
+    "MC服务器": {
+        "path": "plugins.mcserver",
+        "docs": "查看MC服务器状态",
+        "version": "1.0.0",
+        "author": "l_o_o_k",
+        "is_dir": false
+    },
+    "舔狗日记": {
+        "path": "plugins.tiangou",
+        "docs": "爱你无需多言(doge)",
+        "version": "1.0.0",
+        "author": "l_o_o_k",
+        "is_dir": false
+    }
+}
