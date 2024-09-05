@@ -1,25 +1,4 @@
 {
-    "lk聊天": {
-        "path": "plugins.lkchat",
-        "docs": "lk插件处理聊天的部分",
-        "version": "0.1.0",
-        "author": "l_o_o_k",
-        "is_dir": true
-    },
-    "lk农场": {
-        "path": "plugins.lkfarm",
-        "docs": "l_o_o_k的农场插件",
-        "version": "0.1.0",
-        "author": "l_o_o_k",
-        "is_dir": true
-    },
-    "lk宠物": {
-        "path": "plugins.lkpet",
-        "docs": "l_o_o_k的赛博宠物插件",
-        "version": "0.1.3-fix1",
-        "author": "l_o_o_k",
-        "is_dir": true
-    },
     "谁是卷王": {
         "path": "plugins.anti_effort",
         "docs": "谁是卷王!",
