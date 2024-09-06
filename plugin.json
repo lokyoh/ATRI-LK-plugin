@@ -100,7 +100,7 @@
     "coser": {
         "path": "plugins.coser",
         "docs": "三次元也不戳，嘿嘿嘿",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "author": "l_o_o_k",
         "is_dir": false
     },
