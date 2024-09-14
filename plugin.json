@@ -15,7 +15,7 @@
     },
     "棋类游戏": {
         "path": "plugins.boardgame",
-        "docs": "usage：\n    棋类游戏\n    指令：\n        @bot + “五子棋”、“黑白棋”、“围棋”开始一局游戏;\n        再发送“落子 字母+数字”下棋，如“落子 A1”;\n        发送“结束下棋”结束当前棋局",
+        "docs": "棋类游戏\n指令：\n@bot + “五子棋”、“黑白棋”、“围棋”开始一局游戏;\n再发送“落子 字母+数字”下棋，如“落子 A1”;\n发送“结束下棋”结束当前棋局",
         "version": "0.1.0",
         "author": "xipesoy",
         "is_dir": true
@@ -116,27 +116,30 @@
         "docs": "骂我 发送一条钉宫语录",
         "version": "1.0.0",
         "author": "l_o_o_k",
-        "is_dir": false
+        "is_dir": false,
+        "res": "res/record/dinggong"
     },
     "每日发癫": {
         "path": "plugins.fadian",
         "docs": "不每天对Ta发癫很难受呀！",
         "version": "1.0.0",
         "author": "l_o_o_k",
-        "is_dir": false
+        "is_dir": false,
+        "res": "res/text/fa_dian.txt"
     },
     "MC服务器": {
         "path": "plugins.mcserver",
         "docs": "查看MC服务器状态",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "author": "l_o_o_k",
-        "is_dir": false
+        "is_dir": true
     },
     "舔狗日记": {
         "path": "plugins.tiangou",
         "docs": "爱你无需多言(doge)",
         "version": "1.0.0",
         "author": "l_o_o_k",
-        "is_dir": false
+        "is_dir": false,
+        "res": "res/text/tiangou.txt"
     }
 }
