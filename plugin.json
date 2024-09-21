@@ -125,7 +125,7 @@
         "version": "1.0.0",
         "author": "l_o_o_k",
         "is_dir": false,
-        "res": "res/text/fa_dian.txt"
+        "res": "res/text/fa_dian.json"
     },
     "MC服务器": {
         "path": "plugins.mcserver",
