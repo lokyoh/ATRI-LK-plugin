@@ -10,7 +10,7 @@ from ATRI.service import Service
 
 from .data_source import check_mc_status
 
-plugin = Service("MC服务器").document("查看MC服务器状态").type(Service.ServiceType.FUNCTION).version("1.1.0")
+plugin = Service("MC服务器").document("查看MC服务器状态").type(Service.ServiceType.FUNCTION).version("1.1.1")
 
 _lmt_notice = ["慢...慢一..点❤", "冷静1下", "歇会歇会~~", "呜呜...别急", "太快了...受不了", "不要这么快呀"]
 

@@ -2,7 +2,7 @@ import re
 from mcstatus import JavaServer
 
 
-async def check_mc_status(s_name: str, name: str):
+async def check_mc_status(name: str, s_name: str):
     try:
         js = await JavaServer.async_lookup(name, timeout=5)
         status = js.status()
