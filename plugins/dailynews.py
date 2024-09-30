@@ -1,6 +1,5 @@
-import json
-import os
 from random import choice
+from typing import List
 
 from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import MessageSegment, Message
@@ -15,6 +14,8 @@ from ATRI.service import Service
 from ATRI.utils.apscheduler import scheduler
 from ATRI.log import log
 from ATRI.utils import request
+from ATRI.utils.model import BaseModel
+from ATRI.configs import PluginConfig
 
 plugin = Service("每日新闻").document("订阅每日新闻服务").type(Service.ServiceType.FUNCTION).version("1.0.0")
 
@@ -23,18 +24,13 @@ _lmt_notice = ["慢...慢一..点❤", "冷静1下", "歇会歇会~~", "呜呜..
 DATA_PATH = f"{PLUGIN_DIR}/news_groups.json"
 
 
-def save_news_config():
-    os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
-    with open(DATA_PATH, 'w', encoding='utf-8') as _file:
-        json.dump(news_config, _file, indent=4, ensure_ascii=False)
+class NewsGroupConfig(BaseModel):
+    groups: List[str] = []
 
 
-if os.path.exists(DATA_PATH):
-    with open(DATA_PATH, 'r', encoding='utf-8') as file:
-        news_config = json.load(file)
-else:
-    news_config = {"groups": []}
-    save_news_config()
+config_manage = PluginConfig("每日新闻", NewsGroupConfig)
+
+config: NewsGroupConfig = config_manage.config()
 
 today_news = plugin.on_command(cmd='今日新闻', docs="查看今日新闻")
 
@@ -50,13 +46,13 @@ news_sub = plugin.on_command(cmd="每日新闻订阅", docs="管理本群的新�
 @news_sub.handle()
 async def _(event: GroupMessageEvent):
     group_id = str(event.group_id)
-    if group_id in news_config["groups"]:
-        news_config["groups"].remove(group_id)
-        save_news_config()
+    if group_id in config.groups:
+        config.groups.remove(group_id)
+        config_manage.change_config(config)
         await news_sub.finish("本群每日新闻订阅已关闭")
     else:
-        news_config["groups"].append(group_id)
-        save_news_config()
+        config.groups.append(group_id)
+        config_manage.change_config(config)
         await news_sub.finish("本群每日新闻订阅已开启")
 
 
@@ -67,7 +63,7 @@ async def daily_job():
             group_list = await bot.get_group_list()
             for group in group_list:
                 group_id = str(group["group_id"])
-                if group_id in news_config["groups"]:
+                if group_id in config.groups:
                     await bot.send_group_msg(group_id=group_id, message=Message().append(message))
 
 

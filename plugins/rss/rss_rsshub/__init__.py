@@ -18,9 +18,9 @@ from ATRI.permission import ADMIN
 from ATRI.utils import TimeDealer
 from ATRI.message import MessageBuilder
 from ATRI.utils.apscheduler import scheduler
-from ATRI.database import RssRsshubSubcription
 
 from .data_source import RssHubSubscriptor
+from .model import RssRsshubSubcription
 
 sub = RssHubSubscriptor()
 
@@ -30,7 +30,7 @@ plugin = (
     .type(Service.ServiceType.SUBSCRIBE)
     .permission(ADMIN)
     .main_cmd("/rss.rsshub")
-    .version("1.0.0")
+    .version("1.1.0")
 )
 
 add_sub = plugin.cmd_as_group("add", "为本群添加 RSSHub 订阅")

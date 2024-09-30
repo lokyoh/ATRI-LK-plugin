@@ -9,7 +9,7 @@
     "b站动态订阅": {
         "path": "plugins.bilibili_dynamic",
         "docs": "b站动态订阅助手~",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "author": "Kyomotoi",
         "is_dir": true
     },
@@ -44,28 +44,28 @@
     "rss.mikan": {
         "path": "plugins.rss.rss_mikanan",
         "docs": "Rss的mikan支持",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "author": "Kyomotoi",
         "is_dir": true
     },
     "rss.rsshub": {
         "path": "plugins.rss.rss_rsshub",
         "docs": "Rss的Rsshub支持",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "author": "Kyomotoi",
         "is_dir": true
     },
     "以图搜图": {
         "path": "plugins.saucenao",
         "docs": "以图搜图，仅限二刺螈",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "author": "Kyomotoi",
         "is_dir": true
     },
     "涩图": {
         "path": "plugins.setu",
         "docs": "hso!",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "author": "Kyomotoi, l_o_o_k",
         "is_dir": true
     },
@@ -117,7 +117,7 @@
         "version": "1.0.0",
         "author": "l_o_o_k",
         "is_dir": false,
-        "res": "res/record/dinggong"
+        "res": ["res/record/dinggong"]
     },
     "每日发癫": {
         "path": "plugins.fadian",
@@ -125,7 +125,7 @@
         "version": "1.0.0",
         "author": "l_o_o_k",
         "is_dir": false,
-        "res": "res/text/fa_dian.json"
+        "res": ["res/text/fa_dian.json"]
     },
     "MC服务器": {
         "path": "plugins.mcserver",
@@ -140,6 +140,6 @@
         "version": "1.1.0",
         "author": "l_o_o_k",
         "is_dir": false,
-        "res": "res/text/tiangou.txt"
+        "res": ["res/text/tiangou.txt"]
     }
 }

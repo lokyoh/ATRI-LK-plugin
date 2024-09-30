@@ -18,14 +18,14 @@ from ATRI.service import Service
 from ATRI.utils import TimeDealer
 from ATRI.permission import MASTER, ADMIN
 from ATRI.utils.apscheduler import scheduler
-from ATRI.database import BilibiliSubscription
 
 from .data_source import BilibiliDynamicSubscriptor
+from .model import BilibiliSubscription
 
 __CONTENT_LIMIT = 0
 
 plugin = Service("b站动态订阅").document("b站动态订阅助手~").type(Service.ServiceType.SUBSCRIBE).version(
-    "1.0.0").permission(ADMIN).main_cmd("/bd")
+    "1.1.0").permission(ADMIN).main_cmd("/bd")
 sub = BilibiliDynamicSubscriptor()
 
 add_sub = plugin.cmd_as_group("add", "添加b站up主订阅")

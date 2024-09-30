@@ -17,11 +17,11 @@
     "author": "作者",
     "is_dir": true
     //可选
-    "res": "res/your_res"
+    "res": ["res/your_res.res", "res/your_res"]
 }
 ```
 
-> 资源位置目前只支持一个但支持单文件与文件夹
+> 资源位置目前只支持项目内的单文件与文件夹，外部资源请在插件中下载
 
 > 需要安装新依赖需要将依赖写在你的插件目录的`requirements.txt`
 

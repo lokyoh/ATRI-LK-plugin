@@ -2,8 +2,13 @@ from datetime import datetime, timedelta, timezone as tz
 
 from ATRI.message import MessageBuilder
 from ATRI.exceptions import ThesaurusError
-from ATRI.database import DatabaseWrapper, ThesaurusStoragor, ThesaurusAuditList
+from ATRI.database import DatabaseWrapper, add_database
 
+from . import models
+from .models import ThesaurusStoragor, ThesaurusAuditList
+
+add_database("thesaurusstoragor", models)
+add_database("thesaurusauditlist", models)
 DBForTS = DatabaseWrapper(ThesaurusStoragor)
 DBForTAL = DatabaseWrapper(ThesaurusAuditList)
 

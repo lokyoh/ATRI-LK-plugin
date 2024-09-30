@@ -2,12 +2,11 @@ import re
 from typing import Tuple
 from nonebot.adapters.onebot.v11 import MessageSegment
 
-from ATRI import conf
 from ATRI.utils import request
 from ATRI.exceptions import RequestError
 
+from .config import config
 from .models import LoliconResponse, SetuInfo
-from .nsfw_checker import detect_image, init_model
 
 _LOLICON_URL = "https://api.lolicon.app/setu/v2"
 
@@ -45,10 +44,10 @@ class Setu:
         pid = data.pid
         url = data.urls.original
 
-        if conf.Setu.reverse_proxy:
+        if config.reverse_proxy:
             patt = "://(.*?)/"
             domain = re.findall(patt, url)[0]
-            setu = url.replace(domain, conf.Setu.reverse_proxy_domain)
+            url = url.replace(domain, config.reverse_proxy_domain)
 
         setu_data = SetuInfo(title=title, pid=pid, url=url)
         setu = MessageSegment.image(
@@ -57,20 +56,3 @@ class Setu:
         )
 
         return setu, setu_data
-
-    async def detecter(self, max_size: int, disab_gif: bool) -> float:
-        """图片涩值检测
-
-        Args:
-            max_size (int): 检测文件大小限制
-            disab_gif (bool): 是否检测动图
-
-        Returns:
-            float: 百分比涩值
-        """
-        return await detect_image(self.url, max_size, disab_gif)
-
-
-from ATRI import driver
-
-driver().on_startup(init_model)

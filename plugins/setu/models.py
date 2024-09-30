@@ -1,5 +1,6 @@
 from typing import List
-from pydantic import BaseModel
+
+from ATRI.utils.model import BaseModel
 
 
 class Urls(BaseModel):

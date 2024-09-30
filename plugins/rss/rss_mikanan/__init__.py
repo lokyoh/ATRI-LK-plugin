@@ -18,9 +18,9 @@ from ATRI.permission import ADMIN
 from ATRI.message import MessageBuilder
 from ATRI.utils import TimeDealer
 from ATRI.utils.apscheduler import scheduler
-from ATRI.database import RssMikananiSubcription
 
 from .data_source import RssMikananSubscriptor
+from .model import RssMikananiSubcription
 
 sub = RssMikananSubscriptor()
 
@@ -30,7 +30,7 @@ plugin = (
     .type(Service.ServiceType.SUBSCRIBE)
     .permission(ADMIN)
     .main_cmd("/rss.mikan")
-    .version("1.0.0")
+    .version("1.1.0")
 )
 
 add_sub = plugin.cmd_as_group("add", "为本群添加 Mikan 订阅")

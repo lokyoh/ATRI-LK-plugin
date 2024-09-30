@@ -5,9 +5,11 @@ from operator import itemgetter
 from ATRI.message import MessageBuilder
 from ATRI.utils import TimeDealer
 from ATRI.exceptions import BilibiliDynamicError
-from ATRI.database import DatabaseWrapper, BilibiliSubscription
+from ATRI.database import DatabaseWrapper, add_database
 
+from . import model
 from .api import API
+from .model import BilibiliSubscription
 
 _OUTPUT_FORMAT = (
     MessageBuilder("{up_nickname} 的{up_dy_type}更新了!")
@@ -16,6 +18,7 @@ _OUTPUT_FORMAT = (
     .text("链接: {up_dy_link}")
     .done()
 )
+add_database("bilibili", model)
 DB = DatabaseWrapper(BilibiliSubscription)
 
 

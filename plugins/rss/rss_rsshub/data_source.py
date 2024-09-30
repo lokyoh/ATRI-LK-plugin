@@ -2,8 +2,12 @@ import xmltodict
 
 from ATRI.exceptions import RssError
 from ATRI.utils import request, gen_random_str
-from ATRI.database import DatabaseWrapper, RssRsshubSubcription
+from ATRI.database import DatabaseWrapper, add_database
 
+from . import model
+from .model import RssRsshubSubcription
+
+add_database("rssrsshubsubscription", model)
 DB = DatabaseWrapper(RssRsshubSubcription)
 
 
