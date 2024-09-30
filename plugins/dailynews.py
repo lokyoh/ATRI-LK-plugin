@@ -17,7 +17,7 @@ from ATRI.utils import request
 from ATRI.utils.model import BaseModel
 from ATRI.configs import PluginConfig
 
-plugin = Service("每日新闻").document("订阅每日新闻服务").type(Service.ServiceType.FUNCTION).version("1.0.0")
+plugin = Service("每日新闻").document("订阅每日新闻服务").type(Service.ServiceType.FUNCTION).version("1.1.0")
 
 url = "http://dwz.2xb.cn/zaob"
 _lmt_notice = ["慢...慢一..点❤", "冷静1下", "歇会歇会~~", "呜呜...别急", "太快了...受不了", "不要这么快呀"]
