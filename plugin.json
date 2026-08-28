@@ -167,5 +167,11 @@
         "docs": "一个ATRI-LK插件示例模板。",
         "version": "github",
         "author": "l_o_o_k"
+    },
+    "小程序解析": {
+        "repo": "https://github.com/lokyoh/atrilk_plugin_card_analysis",
+        "docs": "解析QQ小程序卡片。",
+        "version": "github",
+        "author": "l_o_o_k"
     }
 }
