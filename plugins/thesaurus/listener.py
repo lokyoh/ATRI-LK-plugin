@@ -1,21 +1,25 @@
 import re
 from random import choice, shuffle
 
-from nonebot import get_bot
-from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent
-from nonebot.adapters.onebot.v11.helpers import Cooldown
-
 from apscheduler.triggers.base import BaseTrigger
 from apscheduler.triggers.combining import AndTrigger
 from apscheduler.triggers.interval import IntervalTrigger
+from nonebot import get_bot
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, MessageEvent
+from nonebot.adapters.onebot.v11.helpers import Cooldown
 
 from ATRI.log import log
+from ATRI.scheduler import scheduler
 from ATRI.service import Service, ServiceTools
-from ATRI.utils.apscheduler import scheduler
 
-from .data_source import ThesaurusManager, ThesaurusListener, ThesaurusStoragor
+from .data_source import ThesaurusListener, ThesaurusManager, ThesaurusStoragor
 
-thes_listener = Service("词库监听").document("词库监听器").type(Service.ServiceType.HIDDEN)
+thes_listener = Service(
+    "词库监听",
+    "词库监听器",
+    "",
+    Service.ServiceType.HIDDEN,
+)
 
 
 class ThesaurusLinstenerIsEnabledChecker(BaseTrigger):
@@ -68,12 +72,12 @@ def init_listener():
     scheduler.add_job(
         _thesaurus_vote_listener,
         AndTrigger([IntervalTrigger(seconds=10), ThesaurusLinstenerIsEnabledChecker()]),
-        max_instances=3,  # type: ignore
-        misfire_grace_time=20,  # type: ignore
+        max_instances=3,
+        misfire_grace_time=20,
     )
 
 
-async def process_message(event: MessageEvent, query_group_id: int = int()):
+async def process_message(event: MessageEvent, query_group_id: int = 0):
     tl = ThesaurusListener()
     msg = event.get_message().extract_plain_text()
 
@@ -92,11 +96,11 @@ async def process_message(event: MessageEvent, query_group_id: int = int()):
         matcher = item_info.matcher
         if item_info.need_at and not event.is_tome():
             return
-        if match_type == 1 and matcher in msg:
-            await main_listener.finish(Message(choice(item_info.result)))
-        elif match_type == 2 and re.findall(matcher, msg):
-            await main_listener.finish(Message(choice(item_info.result)))
-        elif matcher == msg:
+        if (
+            (match_type == 1 and matcher in msg)
+            or (match_type == 2 and re.findall(matcher, msg))
+            or matcher == msg
+        ):
             await main_listener.finish(Message(choice(item_info.result)))
 
 

@@ -1,23 +1,23 @@
+import asyncio
 import re
 import shlex
-import asyncio
 from asyncio import TimerHandle
 from dataclasses import dataclass
-from typing import Dict, List, Optional, NoReturn, Type, Tuple
+from typing import NoReturn
 
-from nonebot.matcher import Matcher
-from nonebot.rule import ArgumentParser
-from nonebot.exception import ParserExit
 from nonebot import on_command, on_shell_command
-from nonebot.params import ShellCommandArgv, Command, CommandArg, RawCommand
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, MessageSegment
+from nonebot.exception import ParserExit
+from nonebot.matcher import Matcher
+from nonebot.params import Command, CommandArg, RawCommand, ShellCommandArgv
+from nonebot.rule import ArgumentParser
 
 from ATRI.service import Service
 
+from .game import Game, MoveResult, Player
 from .go import Go
 from .gomoku import Gomoku
 from .othello import Othello
-from .game import Game, MoveResult, Player
 
 __plugin_usage__ = """
 usage：
@@ -28,7 +28,12 @@ usage：
         发送“结束下棋”结束当前棋局
 """.strip()
 
-plugin = Service("棋类游戏").document(__plugin_usage__).type(Service.ServiceType.GAME).version("1.0.0")
+plugin = Service(
+    "棋类游戏",
+    __plugin_usage__,
+    "0.1.1",
+    Service.ServiceType.GAME,
+)
 
 game_intro = plugin.on_command(cmd="棋类游戏介绍", docs="介绍规则")
 
@@ -40,7 +45,11 @@ async def _():
 
 parser = ArgumentParser("boardgame", description="棋类游戏")
 group = parser.add_mutually_exclusive_group()
-group.add_argument("-r", "--rule", help="棋局规则，目前支持：围棋(go)、五子棋(gomoku)、黑白棋/奥赛罗(othello)")
+group.add_argument(
+    "-r",
+    "--rule",
+    help="棋局规则，目前支持：围棋(go)、五子棋(gomoku)、黑白棋/奥赛罗(othello)",
+)
 group.add_argument("-e", "--stop", "--end", action="store_true", help="停止下棋")
 group.add_argument("-v", "--show", "--view", action="store_true", help="显示棋盘")
 group.add_argument("--skip", action="store_true", help="跳过回合")
@@ -54,17 +63,17 @@ boardgame = on_shell_command("boardgame", parser=parser, block=True, priority=13
 
 @boardgame.handle()
 async def _(
-        matcher: Matcher, event: GroupMessageEvent, argv: List[str] = ShellCommandArgv()
+    matcher: Matcher, event: GroupMessageEvent, argv: list[str] = ShellCommandArgv()
 ):
     await handle_boardgame(matcher, event, argv)
 
 
-def shortcut(cmd: str, argv: List[str] = [], **kwargs):
+def shortcut(cmd: str, argv: list[str] = [], **kwargs):
     command = on_command(cmd, **kwargs, block=True, priority=13)
 
     @command.handle()
     async def _(
-            matcher: Matcher, event: GroupMessageEvent, msg: Message = CommandArg()
+        matcher: Matcher, event: GroupMessageEvent, msg: Message = CommandArg()
     ):
         try:
             args = shlex.split(msg.extract_plain_text().strip())
@@ -80,18 +89,30 @@ def game_running(event: GroupMessageEvent) -> bool:
 
 # 命令前缀为空则需要to_me，否则不需要
 def smart_to_me(
-        event: GroupMessageEvent,
-        cmd: Tuple[str, ...] = Command(),
-        raw_cmd: str = RawCommand(),
+    event: GroupMessageEvent,
+    cmd: tuple[str, ...] = Command(),
+    raw_cmd: str = RawCommand(),
 ) -> bool:
     return not raw_cmd.startswith(cmd[0]) or event.is_tome()
 
 
 shortcut("五子棋", ["--rule", "gomoku", "--size", "15"], rule=smart_to_me)
-shortcut("黑白棋", ["--rule", "othello", "--size", "8"], aliases={"奥赛罗"}, rule=smart_to_me)
+shortcut(
+    "黑白棋", ["--rule", "othello", "--size", "8"], aliases={"奥赛罗"}, rule=smart_to_me
+)
 shortcut("围棋", ["--rule", "go", "--size", "19"], rule=smart_to_me)
-shortcut("停止下棋", ["--stop"], aliases={"结束下棋", "停止游戏", "结束游戏"}, rule=game_running)
-shortcut("查看棋盘", ["--show"], aliases={"查看棋局", "显示棋盘", "显示棋局"}, rule=game_running)
+shortcut(
+    "停止下棋",
+    ["--stop"],
+    aliases={"结束下棋", "停止游戏", "结束游戏"},
+    rule=game_running,
+)
+shortcut(
+    "查看棋盘",
+    ["--show"],
+    aliases={"查看棋局", "显示棋盘", "显示棋局"},
+    rule=game_running,
+)
 shortcut("跳过回合", ["--skip"], rule=game_running)
 shortcut("悔棋", ["--repent"], rule=game_running)
 shortcut("落子", rule=game_running)
@@ -113,14 +134,14 @@ class Options:
     position: str = ""
 
 
-rules: Dict[str, Type[Game]] = {
+rules: dict[str, type[Game]] = {
     "go": Go,
     "gomoku": Gomoku,
     "othello": Othello,
 }
 
-games: Dict[str, Game] = {}
-timers: Dict[str, TimerHandle] = {}
+games: dict[str, Game] = {}
+timers: dict[str, TimerHandle] = {}
 
 
 async def stop_game(matcher: Matcher, cid: str):
@@ -141,9 +162,9 @@ def set_timeout(matcher: Matcher, cid: str, timeout: float = 600):
     timers[cid] = timer
 
 
-async def handle_boardgame(matcher: Matcher, event: GroupMessageEvent, argv: List[str]):
+async def handle_boardgame(matcher: Matcher, event: GroupMessageEvent, argv: list[str]):
     async def send(
-            message: Optional[str] = None, image: Optional[bytes] = None
+        message: str | None = None, image: bytes | None = None
     ) -> NoReturn:
         if not (message or image):
             await matcher.finish()
@@ -182,7 +203,9 @@ async def handle_boardgame(matcher: Matcher, event: GroupMessageEvent, argv: Lis
         elif rule in ["othello", "黑白棋"]:
             game = Othello()
         else:
-            await send("没有找到对应的规则，目前支持：围棋(go)、五子棋(gomoku)、黑白棋(othello)")
+            await send(
+                "没有找到对应的规则，目前支持：围棋(go)、五子棋(gomoku)、黑白棋(othello)"
+            )
 
         if options.size:
             game.size = options.size
@@ -201,7 +224,8 @@ async def handle_boardgame(matcher: Matcher, event: GroupMessageEvent, argv: Lis
         games[cid] = game
         set_timeout(matcher, cid)
         await send(
-            f"{player} 发起了游戏 {game.name}！\n发送“落子 字母+数字”下棋，如“落子 A1”", await game.draw()
+            f"{player} 发起了游戏 {game.name}！\n发送“落子 字母+数字”下棋，如“落子 A1”",
+            await game.draw(),
         )
 
     if options.stop:
@@ -219,10 +243,10 @@ async def handle_boardgame(matcher: Matcher, event: GroupMessageEvent, argv: Lis
 
     player = new_player(event)
     if (
-            game.player_black
-            and game.player_white
-            and game.player_black != player
-            and game.player_white != player
+        game.player_black
+        and game.player_white
+        and game.player_black != player
+        and game.player_white != player
     ):
         await send("游戏已经开始，无法加入")
 
@@ -246,7 +270,7 @@ async def handle_boardgame(matcher: Matcher, event: GroupMessageEvent, argv: Lis
         await send(f"{player} 进行了悔棋", await game.draw())
 
     if (game.player_next and game.player_next != player) or (
-            game.player_last and game.player_last == player
+        game.player_last and game.player_last == player
     ):
         await send("当前不是你的回合")
 
@@ -292,7 +316,7 @@ async def handle_boardgame(matcher: Matcher, event: GroupMessageEvent, argv: Lis
         elif result == MoveResult.WHITE_WIN:
             msg += f"，恭喜 {game.player_white} 获胜！"
         elif result == MoveResult.DRAW:
-            msg += f"，本局游戏平局"
+            msg += "，本局游戏平局"
     else:
         if game.player_next:
             msg += f"，下一手轮到 {game.player_next}"

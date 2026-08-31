@@ -1,27 +1,32 @@
+import json
 import os
 import re
-import json
 from random import choice
 
 from nonebot import get_bot
-from nonebot.params import ArgPlainText
 from nonebot.adapters.onebot.v11 import (
+    GroupMessageEvent,
     Message,
     MessageEvent,
     MessageSegment,
-    GroupMessageEvent,
 )
 from nonebot.adapters.onebot.v11.helpers import Cooldown
+from nonebot.params import ArgPlainText
 
-from ATRI.service import Service
+from ATRI.log import log
 from ATRI.message import MessageBuilder
 from ATRI.permission import MASTER
-from ATRI.utils.apscheduler import scheduler
+from ATRI.scheduler import scheduler
+from ATRI.service import Service
 
-from .data_source import AntiEffort, PLUGIN_DIR
+from .data_source import PLUGIN_DIR, AntiEffort
 
-plugin = Service("谁是卷王").document("谁是卷王!").type(Service.ServiceType.ENTERTAINMENT).main_cmd("/ae").version(
-    "1.0.0")
+plugin = Service(
+    "谁是卷王",
+    "谁是卷王!",
+    "1.0.1",
+    Service.ServiceType.ENTERTAINMENT,
+).main_cmd("ae")
 ae = AntiEffort()
 
 _lmt_notice = choice(["慢...慢一..点❤", "冷静1下", "歇会歇会~~", "呜呜...别急"])
@@ -35,7 +40,7 @@ _GET_URL_MSG = (
     .text("- 所需url为下一栏 HTML 中的 url")
 )
 
-add_user = plugin.on_command("!我也要卷", "加入卷王统计榜")
+add_user = plugin.on_command("我也要卷", "加入卷王统计榜")
 
 
 @add_user.got(
@@ -43,24 +48,26 @@ add_user = plugin.on_command("!我也要卷", "加入卷王统计榜")
     _GET_URL_MSG,
 )
 @add_user.got("rank_nickname", "如何在排行榜中称呼你捏")
-@add_user.got("to_global", "你希望加入公共排行榜吗？(y/n)", [Cooldown(60, prompt=_lmt_notice)])
+@add_user.got(
+    "to_global", "你希望加入公共排行榜吗？(y/n)", [Cooldown(60, prompt=_lmt_notice)]
+)
 async def _deal_add_user(
-        event: GroupMessageEvent,
-        url: str = ArgPlainText("waka_url"),
-        user_nickname: str = ArgPlainText("rank_nickname"),
-        to_global: str = ArgPlainText("to_global"),
+    event: GroupMessageEvent,
+    url: str = ArgPlainText("waka_url"),
+    user_nickname: str = ArgPlainText("rank_nickname"),
+    to_global: str = ArgPlainText("to_global"),
 ):
     group_id = event.group_id
     user_id = event.user_id
     aititude = ["y", "Y", "是", "希望", "同意"]
     if to_global in aititude:
-        await ae.add_user(int(), user_id, user_nickname, url)
+        await ae.add_user(0, user_id, user_nickname, url)
 
     result = await ae.add_user(group_id, user_id, user_nickname, url)
     await add_user.finish(result)
 
 
-join_global_rank = plugin.on_command("!参加公共卷", "加入公共卷王榜")
+join_global_rank = plugin.on_command("参加公共卷", "加入公共卷王榜")
 
 
 @join_global_rank.handle()
@@ -75,7 +82,7 @@ async def _join_global_rank(event: GroupMessageEvent):
             if i["user_id"] == user_id:
                 user_nickname = i["user_nickname"]
                 url = i["waka_url"]
-                await ae.add_user(int(), user_id, user_nickname, url)
+                await ae.add_user(0, user_id, user_nickname, url)
                 await join_global_rank.finish("完成~！")
 
 
@@ -84,17 +91,17 @@ async def _join_global_rank(event: GroupMessageEvent):
     "rank_nickname", "如何在排行榜中称呼你捏", [Cooldown(60, prompt=_lmt_notice)]
 )
 async def _(
-        event: GroupMessageEvent,
-        url: str = ArgPlainText("waka_url"),
-        user_nickname: str = ArgPlainText("rank_nickname"),
+    event: GroupMessageEvent,
+    url: str = ArgPlainText("waka_url"),
+    user_nickname: str = ArgPlainText("rank_nickname"),
 ):
     user_id = event.user_id
 
-    result = await ae.add_user(int(), user_id, user_nickname, url)
+    result = await ae.add_user(0, user_id, user_nickname, url)
     await join_global_rank.finish(result)
 
 
-user_leave = plugin.on_command("!我不卷了", "退出卷王统计榜")
+user_leave = plugin.on_command("我不卷了", "退出卷王统计榜")
 
 
 @user_leave.handle([Cooldown(60, prompt=_lmt_notice)])
@@ -102,7 +109,7 @@ async def _user_leave(event: GroupMessageEvent):
     group_id = event.group_id
     user_id = event.user_id
 
-    ae.del_user(int(), user_id)
+    ae.del_user(0, user_id)
     result = ae.del_user(group_id, user_id)
     await user_leave.finish(result)
 
@@ -149,7 +156,7 @@ async def _check_rank_global_today(event: MessageEvent):
     await check_rank_global_today.send("别急！正在统计！")
 
     user_id = event.user_id
-    raw_data = ae.get_data(int())
+    raw_data = ae.get_data(0)
     if not raw_data:
         await check_rank_global_today.finish("还没有人加入公共卷王统计榜！")
 
@@ -165,7 +172,7 @@ async def _check_rank_global_recent_week(event: MessageEvent):
     await check_rank_global_recent_week.send("别急！正在统计！")
 
     user_id = event.user_id
-    raw_data = ae.get_data(int())
+    raw_data = ae.get_data(0)
     if not raw_data:
         await check_rank_global_recent_week.finish("还没有人加入公共卷王统计榜！")
 
@@ -182,7 +189,9 @@ async def _update_data(event: MessageEvent):
     await update_data.finish("更新完成~！")
 
 
-@scheduler.scheduled_job("interval", name="卷王数据更新", minutes=15, misfire_grace_time=15)  # type: ignore
+@scheduler.scheduled_job(
+    "interval", name="卷王数据更新", minutes=15, misfire_grace_time=15
+)
 async def _():
     await ae.update_data()
 
@@ -193,13 +202,15 @@ async def _():
     ae.store_user_data_recent()
 
 
-@scheduler.scheduled_job("cron", name="对昨日卷王进行颁奖", hour=8, misfire_grace_time=30)  # type: ignore
+@scheduler.scheduled_job(
+    "cron", name="对昨日卷王进行颁奖", hour=8, misfire_grace_time=30
+)
 async def _():
     files = os.listdir(PLUGIN_DIR)
     if not files:
         return
 
-    eb_g = list()
+    eb_g = []
     for f in files:
         raw_data = f.split(".")
         if raw_data[-1] != "json":
@@ -238,4 +249,5 @@ async def _():
             await bot.send_group_msg(group_id=g, message="昨日卷王已经产生！")
             await bot.send_group_msg(group_id=g, message=Message(result))
         except Exception:
+            log.warning(f"卷王插件在群 {g} 发送昨日卷王消息失败")
             continue

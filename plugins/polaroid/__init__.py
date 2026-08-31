@@ -1,20 +1,26 @@
 from random import choice
 
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, Message
+from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
 from nonebot.adapters.onebot.v11.helpers import Cooldown
 
 from ATRI.rule import to_bot
 from ATRI.service import Service
 
-from .data_source import Polaroid, TEMP_PATH
+from .data_source import TEMP_PATH, Polaroid
 
-plugin = Service("拍立得").document("根据头像生成拍立得风格照片！").type(Service.ServiceType.ENTERTAINMENT).version(
-    "1.0.1")
+plugin = Service(
+    "拍立得",
+    "根据头像生成拍立得风格照片！",
+    "1.0.2",
+    Service.ServiceType.ENTERTAINMENT,
+)
 pol = Polaroid()
 
 _flmt_notice = choice(["慢...慢一..点❤", "冷静1下", "歇会歇会~~"])
 
-polaroid = plugin.on_command("拍立得", "获取一张以自己头像的拍立得图片! 需at", rule=to_bot())
+polaroid = plugin.on_command(
+    "拍立得", "获取一张以自己头像的拍立得图片! 需at", rule=to_bot()
+)
 
 
 @polaroid.handle([Cooldown(15, prompt=_flmt_notice)])

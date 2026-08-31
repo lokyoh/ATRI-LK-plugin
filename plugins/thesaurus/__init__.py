@@ -1,25 +1,25 @@
-from tabulate import tabulate
-from datetime import timedelta, timezone as tz
+from datetime import timedelta
+from datetime import timezone as tz
 
-from nonebot.matcher import Matcher
-from nonebot.params import ArgPlainText, CommandArg, ArgStr
-from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageEvent
 from nonebot.adapters.onebot.v11.utils import unescape
+from nonebot.matcher import Matcher
+from nonebot.params import ArgPlainText, ArgStr, CommandArg
+from tabulate import tabulate
 
-from ATRI.service import Service
 from ATRI.message import MessageBuilder
 from ATRI.permission import ADMIN, MASTER
-from ATRI.utils import gen_random_str, MessageChecker
+from ATRI.service import Service
+from ATRI.utils import MessageChecker, gen_random_str
 
 from .data_source import ThesaurusManager
 
-plugin = (
-    Service("词库管理")
-    .document("支持模糊匹配、全匹配、正则的自定义回复~\n支持分群、全局管理, 支持群内投票添加")
-    .main_cmd("/ts")
-    .type(Service.ServiceType.FUNCTION)
-    .version("1.2.2")
-)
+plugin = Service(
+    "词库管理",
+    "支持模糊匹配、全匹配、正则的自定义回复~\n支持分群、全局管理, 支持群内投票添加",
+    "1.2.3",
+    Service.ServiceType.FUNCTION,
+).main_cmd("ts")
 tm = ThesaurusManager()
 
 add_item = plugin.cmd_as_group("add", "添加本群词条，需审核或投票")
@@ -44,7 +44,7 @@ async def _get_normal_item(matcher: Matcher, args: Message = CommandArg()):
 @add_item.got("ts_normal_item_a", "我答: \n(支持多个回复，用',,'[小写]隔开)")
 @add_item.got("ts_normal_item_is_need_at", "是否需要at: (y/n)")
 async def _deal_noraml_is_need_at(
-        need_at: str = ArgPlainText("ts_normal_item_is_need_at"),
+    need_at: str = ArgPlainText("ts_normal_item_is_need_at"),
 ):
     agree_list = ["y", "Y", "是", "同意", "赞成"]
     disagree_list = ["n", "N", "否", "不", "不同意", "不赞成"]
@@ -54,12 +54,12 @@ async def _deal_noraml_is_need_at(
 
 @add_item.got("ts_normal_item_t", "问答匹配模式: \n(全匹配、模糊匹配、正则)")
 async def _add_normal_item(
-        bot: Bot,
-        event: GroupMessageEvent,
-        item_q: str = ArgStr("ts_normal_item_q"),
-        item_a: str = ArgStr("ts_normal_item_a"),
-        _need_at: str = ArgPlainText("ts_normal_item_is_need_at"),
-        item_t: str = ArgPlainText("ts_normal_item_t"),
+    bot: Bot,
+    event: GroupMessageEvent,
+    item_q: str = ArgStr("ts_normal_item_q"),
+    item_a: str = ArgStr("ts_normal_item_a"),
+    _need_at: str = ArgPlainText("ts_normal_item_is_need_at"),
+    item_t: str = ArgPlainText("ts_normal_item_t"),
 ):
     type_list = ["全匹配", "模糊匹配", "正则"]
     if item_t not in type_list:
@@ -93,7 +93,7 @@ async def _add_normal_item(
         operator,
         operator_id,
         1,
-        list(),
+        [],
     )
     await add_item.finish(result)
 
@@ -119,29 +119,37 @@ async def _get_group_item(matcher: Matcher, args: Message = CommandArg()):
 
 
 @add_item_as_group_admin.got("ts_group_item_q", "有人问:")
-@add_item_as_group_admin.got("ts_group_item_a", "我答: \n(支持多个回复，用',,'[小写]隔开)")
+@add_item_as_group_admin.got(
+    "ts_group_item_a", "我答: \n(支持多个回复，用',,'[小写]隔开)"
+)
 @add_item_as_group_admin.got("ts_group_item_is_need_at", "是否需要at: (y/n)")
 async def _deal_group_is_need_at(
-        need_at: str = ArgPlainText("ts_group_item_is_need_at"),
+    need_at: str = ArgPlainText("ts_group_item_is_need_at"),
 ):
     agree_list = ["y", "Y", "是", "同意", "赞成"]
     disagree_list = ["n", "N", "否", "不", "不同意", "不赞成"]
     if need_at not in agree_list and need_at not in disagree_list:
-        await add_item_as_group_admin.reject("你的观点似乎并不相关呢...请重新输入: (y/n)")
+        await add_item_as_group_admin.reject(
+            "你的观点似乎并不相关呢...请重新输入: (y/n)"
+        )
 
 
-@add_item_as_group_admin.got("ts_group_item_t", "问答匹配模式: \n(全匹配、模糊匹配、正则)")
+@add_item_as_group_admin.got(
+    "ts_group_item_t", "问答匹配模式: \n(全匹配、模糊匹配、正则)"
+)
 async def _add_group_item(
-        bot: Bot,
-        event: GroupMessageEvent,
-        item_q: str = ArgStr("ts_group_item_q"),
-        item_a: str = ArgStr("ts_group_item_a"),
-        _need_at: str = ArgPlainText("ts_group_item_is_need_at"),
-        item_t: str = ArgPlainText("ts_group_item_t"),
+    bot: Bot,
+    event: GroupMessageEvent,
+    item_q: str = ArgStr("ts_group_item_q"),
+    item_a: str = ArgStr("ts_group_item_a"),
+    _need_at: str = ArgPlainText("ts_group_item_is_need_at"),
+    item_t: str = ArgPlainText("ts_group_item_t"),
 ):
     type_list = ["全匹配", "模糊匹配", "正则"]
     if item_t not in type_list:
-        await add_item_as_group_admin.finish("该类型不支持 (全匹配、模糊匹配、正则)\n请重新提交.")
+        await add_item_as_group_admin.finish(
+            "该类型不支持 (全匹配、模糊匹配、正则)\n请重新提交."
+        )
 
     q_checker = MessageChecker(unescape(item_q)).check_cq_code
     a_checker = MessageChecker(unescape(item_a)).check_cq_code
@@ -171,7 +179,7 @@ async def _add_group_item(
         operator,
         operator_id,
         0,
-        list(),
+        [],
     )
     await add_item_as_group_admin.finish(result)
 
@@ -199,7 +207,7 @@ async def _get_global_item(matcher: Matcher, args: Message = CommandArg()):
 @add_item_for_global.got("ts_global_item_a", "我答: \n(支持多个回复，用',,'隔开)")
 @add_item_for_global.got("ts_global_item_is_need_at", "是否需要at: (y/n)")
 async def _deal_global_is_need_at(
-        need_at: str = ArgPlainText("ts_global_item_is_need_at"),
+    need_at: str = ArgPlainText("ts_global_item_is_need_at"),
 ):
     agree_list = ["y", "Y", "是", "同意", "赞成"]
     disagree_list = ["n", "N", "否", "不", "不同意", "不赞成"]
@@ -207,17 +215,21 @@ async def _deal_global_is_need_at(
         await add_item_for_global.reject("你的观点似乎并不相关呢...请重新输入: (y/n)")
 
 
-@add_item_for_global.got("ts_global_item_type", "问答匹配模式: \n(全匹配、模糊匹配、正则)")
+@add_item_for_global.got(
+    "ts_global_item_type", "问答匹配模式: \n(全匹配、模糊匹配、正则)"
+)
 async def _add_global_item(
-        event: MessageEvent,
-        item_q: str = ArgStr("ts_global_item_q"),
-        item_a: str = ArgStr("ts_global_item_a"),
-        _need_at: str = ArgPlainText("ts_global_item_is_need_at"),
-        item_t: str = ArgPlainText("ts_global_item_type"),
+    event: MessageEvent,
+    item_q: str = ArgStr("ts_global_item_q"),
+    item_a: str = ArgStr("ts_global_item_a"),
+    _need_at: str = ArgPlainText("ts_global_item_is_need_at"),
+    item_t: str = ArgPlainText("ts_global_item_type"),
 ):
     type_list = ["全匹配", "模糊匹配", "正则"]
     if item_t not in type_list:
-        await add_item_for_global.finish("该类型不支持 (全匹配、模糊匹配、正则)\n请重新提交.")
+        await add_item_for_global.finish(
+            "该类型不支持 (全匹配、模糊匹配、正则)\n请重新提交."
+        )
 
     agree_list = ["y", "Y", "是", "同意", "赞成"]
     need_at = 1 if _need_at in agree_list else 0
@@ -238,7 +250,7 @@ async def _add_global_item(
         operator,
         opeartor_id,
         0,
-        list(),
+        [],
     )
     await add_item_for_global.finish(result)
 
@@ -259,7 +271,7 @@ async def _get_vote_info(matcher: Matcher, args: Message = CommandArg()):
 
 @vote.got("ts_vote_id", "要投票的词条id是:")
 async def _get_item_id(
-        event: GroupMessageEvent, item_id: str = ArgPlainText("ts_vote_id")
+    event: GroupMessageEvent, item_id: str = ArgPlainText("ts_vote_id")
 ):
     user_id = event.user_id
     group_id = event.group_id
@@ -285,9 +297,9 @@ async def _get_item_id(
 
 @vote.got("ts_vote_attitude", "你的选择是？(y/n)")
 async def _get_voter_attitude(
-        event: GroupMessageEvent,
-        item_id: str = ArgPlainText("ts_vote_id"),
-        attitude: str = ArgPlainText("ts_vote_attitude"),
+    event: GroupMessageEvent,
+    item_id: str = ArgPlainText("ts_vote_id"),
+    attitude: str = ArgPlainText("ts_vote_attitude"),
 ):
     agree_list = ["y", "Y", "是", "同意", "赞成"]
     disagree_list = ["n", "N", "否", "不", "不同意", "不赞成"]
@@ -316,7 +328,7 @@ async def _get_del_normal_item_info(matcher: Matcher, args: Message = CommandArg
 
 @del_item.got("ts_del_item_id", "要删除词条的id是？")
 async def _deal_del_normal_item(
-        event: GroupMessageEvent, item_id: str = ArgPlainText("ts_del_item_id")
+    event: GroupMessageEvent, item_id: str = ArgPlainText("ts_del_item_id")
 ):
     group_id = event.group_id
 
@@ -340,7 +352,9 @@ async def _deal_del_global_item(item_id: str = ArgPlainText("ts_del_global_item_
     await del_global_item.finish(result)
 
 
-del_vote_item = plugin.cmd_as_group("del.v", "删除本群处于投票中的词条", permission=ADMIN)
+del_vote_item = plugin.cmd_as_group(
+    "del.v", "删除本群处于投票中的词条", permission=ADMIN
+)
 
 
 @del_vote_item.handle()
@@ -352,7 +366,7 @@ async def _get_deal_vote_item_info(matcher: Matcher, args: Message = CommandArg(
 
 @del_vote_item.got("ts_del_vote_item_id", "要删除词条的id是？")
 async def _deal_del_vote_item(
-        event: GroupMessageEvent, item_id: str = ArgPlainText("ts_del_vote_item_id")
+    event: GroupMessageEvent, item_id: str = ArgPlainText("ts_del_vote_item_id")
 ):
     group_id = event.group_id
 
@@ -360,7 +374,7 @@ async def _deal_del_vote_item(
     await del_vote_item.finish(result)
 
 
-_LIST_SHOW_DATA: dict = dict()
+_LIST_SHOW_DATA: dict = {}
 
 list_item = plugin.cmd_as_group("list", "查看本群词条")
 
@@ -373,7 +387,7 @@ async def _get_normal_item_list(event: GroupMessageEvent):
     if not query_result:
         await list_item.finish("本群还没有词条呢...")
 
-    items = list()
+    items = []
     for i in query_result[:10]:
         item_matcher = i.matcher
         item_type = i.m_type
@@ -387,9 +401,9 @@ async def _get_normal_item_list(event: GroupMessageEvent):
         items.append([i._id, item_matcher, m_type])
 
     output = (
-            "本群已添加以下词条:\n"
-            + tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
-            + "\n(一页仅展示10个)"
+        "本群已添加以下词条:\n"
+        + tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
+        + "\n(一页仅展示10个)"
     )
 
     if len(query_result) > 10:
@@ -400,7 +414,7 @@ async def _get_normal_item_list(event: GroupMessageEvent):
 
 @list_item.got("item_normal_is_next", "回复'下一页'或'n'以继续查看，任意回复以退出～")
 async def _get_normal_item_more(
-        event: GroupMessageEvent, is_next: str = ArgPlainText("item_normal_is_next")
+    event: GroupMessageEvent, is_next: str = ArgPlainText("item_normal_is_next")
 ):
     user_id = event.user_id
     group_id = event.group_id
@@ -418,7 +432,7 @@ async def _get_normal_item_more(
     else:
         _LIST_SHOW_DATA[group_id] = {user_id: 10}
 
-    items = list()
+    items = []
     show_item = _LIST_SHOW_DATA[group_id][user_id]
     query_result = await tm.get_item_list({"group_id": group_id}, True)
     for i in query_result[:show_item]:
@@ -434,8 +448,8 @@ async def _get_normal_item_more(
         items.append([i._id, item_matcher, m_type])
 
     output = (
-            tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
-            + "\n('下一页'或'n'以继续查看，任意回复以退出)"
+        tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
+        + "\n('下一页'或'n'以继续查看，任意回复以退出)"
     )
     await list_item.reject(output)
 
@@ -449,7 +463,7 @@ async def _get_global_item_list(event: MessageEvent):
     if not query_result:
         await list_global_item.finish("还没有给咱添加全局词条呢...")
 
-    items = list()
+    items = []
     for i in query_result[:10]:
         item_matcher = i.matcher
         item_type = i.m_type
@@ -463,9 +477,9 @@ async def _get_global_item_list(event: MessageEvent):
         items.append([i._id, item_matcher, m_type])
 
     output = (
-            "咱已装载以下词条:\n"
-            + tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
-            + "\n(一页仅展示10个)"
+        "咱已装载以下词条:\n"
+        + tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
+        + "\n(一页仅展示10个)"
     )
 
     if len(query_result) > 10:
@@ -474,9 +488,11 @@ async def _get_global_item_list(event: MessageEvent):
         await list_global_item.finish(output)
 
 
-@list_global_item.got("item_global_is_next", "回复'下一页'或'n'以继续查看，任意回复以退出～")
+@list_global_item.got(
+    "item_global_is_next", "回复'下一页'或'n'以继续查看，任意回复以退出～"
+)
 async def _get_global_item_more(
-        event: MessageEvent, is_next: str = ArgPlainText("item_global_is_next")
+    event: MessageEvent, is_next: str = ArgPlainText("item_global_is_next")
 ):
     user_id = event.user_id
 
@@ -493,7 +509,7 @@ async def _get_global_item_more(
     else:
         _LIST_SHOW_DATA[user_id] = 10
 
-    items = list()
+    items = []
     show_item = _LIST_SHOW_DATA[user_id]
     query_result = await tm.get_item_list({"group_id": 0}, True)
     for i in query_result[:show_item]:
@@ -509,8 +525,8 @@ async def _get_global_item_more(
         items.append([i._id, item_matcher, m_type])
 
     output = (
-            tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
-            + "\n('下一页'或'n'以继续查看，任意回复以退出)"
+        tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
+        + "\n('下一页'或'n'以继续查看，任意回复以退出)"
     )
     await list_global_item.reject(output)
 
@@ -540,9 +556,9 @@ async def _get_vote_item_list(event: GroupMessageEvent):
         items.append([i._id, item_matcher, m_type])
 
     output = (
-            "当前待审词条概况如下:\n"
-            + tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
-            + "\n(一页仅展示10个)"
+        "当前待审词条概况如下:\n"
+        + tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
+        + "\n(一页仅展示10个)"
     )
 
     if len(query_result) > 10:
@@ -551,9 +567,11 @@ async def _get_vote_item_list(event: GroupMessageEvent):
         await list_vote_item.finish(output)
 
 
-@list_vote_item.got("item_vote_is_next", "回复'下一页'或'n'以继续查看，任意回复以退出～")
+@list_vote_item.got(
+    "item_vote_is_next", "回复'下一页'或'n'以继续查看，任意回复以退出～"
+)
 async def _get_vote_item_more(
-        event: GroupMessageEvent, is_next: str = ArgPlainText("item_vote_is_next")
+    event: GroupMessageEvent, is_next: str = ArgPlainText("item_vote_is_next")
 ):
     user_id = event.user_id
     group_id = event.group_id
@@ -571,7 +589,7 @@ async def _get_vote_item_more(
     else:
         _LIST_SHOW_DATA[group_id] = {user_id: 10}
 
-    items = list()
+    items = []
     show_item = _LIST_SHOW_DATA[group_id][user_id]
     query_result = await tm.get_item_list({"group_id": group_id})
     for i in query_result[:show_item]:
@@ -587,8 +605,8 @@ async def _get_vote_item_more(
         items.append([i._id, item_matcher, m_type])
 
     output = (
-            tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
-            + "\n('下一页'或'n'以继续查看，任意回复以退出)"
+        tabulate(items, headers=["ID", "匹配词", "判断方式"], tablefmt="plain")
+        + "\n('下一页'或'n'以继续查看，任意回复以退出)"
     )
     await list_vote_item.reject(output)
 
@@ -609,7 +627,7 @@ async def _get_group_item_info(matcher: Matcher, args: Message = CommandArg()):
 
 @audit_item.got("ts_audit_vote_id", "要审核的词条id是:")
 async def _get_audit_item_id(
-        event: GroupMessageEvent, item_id: str = ArgPlainText("ts_group_vote_id")
+    event: GroupMessageEvent, item_id: str = ArgPlainText("ts_group_vote_id")
 ):
     group_id = event.group_id
 
@@ -631,9 +649,9 @@ async def _get_audit_item_id(
 
 @audit_item.got("ts_audit_vote_attitude", "你的选择是？(y/n)")
 async def _get_audit_attitude(
-        event: GroupMessageEvent,
-        item_id: str = ArgPlainText("ts_audit_vote_id"),
-        attitude: str = ArgPlainText("ts_audit_vote_attitude"),
+    event: GroupMessageEvent,
+    item_id: str = ArgPlainText("ts_audit_vote_id"),
+    attitude: str = ArgPlainText("ts_audit_vote_attitude"),
 ):
     agree_list = ["y", "Y", "是", "同意", "赞成"]
     disagree_list = ["n", "N", "否", "不", "不同意", "不赞成"]
@@ -659,7 +677,7 @@ async def _get_audit_attitude(
             item_info.operator,
             item_info.operator_id,
             0,
-            list(),
+            [],
         )
         await tm.del_item(item_id, group_id, False)
     else:
@@ -693,7 +711,7 @@ async def _info_normal_get_item_id(matcher: Matcher, args: Message = CommandArg(
 
 @get_normal_item_info.got("info_normal_item_id", "需要查看的词条ID:")
 async def _info_normal_get_item_info(
-        event: GroupMessageEvent, _id: str = ArgPlainText("info_normal_item_id")
+    event: GroupMessageEvent, _id: str = ArgPlainText("info_normal_item_id")
 ):
     group_id = event.group_id
 
@@ -777,7 +795,7 @@ async def _info_vote_get_item_id(matcher: Matcher, args: Message = CommandArg())
 
 @get_vote_item_info.got("info_vote_item_id", "需要查看的词条ID:")
 async def _info_vote_get_item_info(
-        event: GroupMessageEvent, _id: str = ArgPlainText("info_vote_item_id")
+    event: GroupMessageEvent, _id: str = ArgPlainText("info_vote_item_id")
 ):
     group_id = event.group_id
 

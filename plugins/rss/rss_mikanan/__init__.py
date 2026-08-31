@@ -1,35 +1,34 @@
 import asyncio
-from tabulate import tabulate
-from datetime import datetime, timedelta, timezone as tz
+from datetime import datetime, timedelta
+from datetime import timezone as tz
 
 from apscheduler.triggers.base import BaseTrigger
 from apscheduler.triggers.combining import AndTrigger
 from apscheduler.triggers.interval import IntervalTrigger
-
 from nonebot import get_bot
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 from nonebot.matcher import Matcher
-from nonebot.params import CommandArg, ArgPlainText
+from nonebot.params import ArgPlainText, CommandArg
 from nonebot.permission import Permission
-from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
+from tabulate import tabulate
 
 from ATRI.log import log
-from ATRI.service import Service
-from ATRI.permission import ADMIN
 from ATRI.message import MessageBuilder
+from ATRI.permission import ADMIN
+from ATRI.scheduler import scheduler
+from ATRI.service import Service
 from ATRI.utils import TimeDealer
-from ATRI.utils.apscheduler import scheduler
 
 from .data_source import RssMikananSubscriptor
 from .model import RssMikananiSubcription
 
 sub = RssMikananSubscriptor()
 
-plugin = Service(
-    "rss.mikan",
-    "Rss的mikan支持",
-    "1.1.1",
-    Service.ServiceType.SUBSCRIBE
-).permission(ADMIN).main_cmd("/rss.mikan")
+plugin = (
+    Service("rss.mikan", "Rss的mikan支持", "1.1.1", Service.ServiceType.SUBSCRIBE)
+    .permission(ADMIN)
+    .main_cmd("rss.mikan")
+)
 
 add_sub = plugin.cmd_as_group("add", "为本群添加 Mikan 订阅")
 
@@ -60,7 +59,7 @@ async def _(event: GroupMessageEvent):
     if not query_result:
         await del_sub.finish("本群还没有任何订阅呢...")
 
-    subs = list()
+    subs = []
     for i in query_result:
         subs.append([i._id, i.title])
 
@@ -81,7 +80,9 @@ async def _(event: GroupMessageEvent, _id: str = ArgPlainText("rm_del_sub_id")):
     await del_sub.finish(result)
 
 
-get_sub_list = plugin.cmd_as_group("list", "获取本群 Mikan 订阅列表", permission=Permission())
+get_sub_list = plugin.cmd_as_group(
+    "list", "获取本群 Mikan 订阅列表", permission=Permission()
+)
 
 
 @get_sub_list.handle()
@@ -92,7 +93,7 @@ async def _(event: GroupMessageEvent):
     if not query_result:
         await get_sub_list.finish("本群还没有任何订阅呢...")
 
-    subs = list()
+    subs = []
     for i in query_result:
         subs.append([i.update_time, i.title])
 
@@ -156,7 +157,11 @@ async def _():
         if ts < m_t:
             title = data.title
 
-            repo = MessageBuilder("本群订阅的 Mikan 更新啦!").text(f"{title}").text(f"{link}")
+            repo = (
+                MessageBuilder("本群订阅的 Mikan 更新啦!")
+                .text(f"{title}")
+                .text(f"{link}")
+            )
 
             bot = get_bot()
             await bot.send_group_msg(group_id=data.group_id, message=repo)

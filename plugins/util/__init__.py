@@ -1,16 +1,21 @@
 import re
 from random import choice, random
 
-from nonebot.matcher import Matcher
-from nonebot.params import CommandArg, ArgPlainText
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.adapters.onebot.v11.helpers import Cooldown
+from nonebot.matcher import Matcher
+from nonebot.params import ArgPlainText, CommandArg
 
 from ATRI.service import Service
 
 from .data_source import Encrypt, Yinglish, roll_dice
 
-plugin = Service("小工具").document("非常实用(?)的工具们!").type(Service.ServiceType.ENTERTAINMENT).version("1.0.1")
+plugin = Service(
+    "小工具",
+    "非常实用(?)的工具们!",
+    "1.0.2",
+    Service.ServiceType.ENTERTAINMENT,
+)
 
 roll = plugin.on_command("/roll", "骰子~用法: 1d10 或 2d10+2d10+more")
 

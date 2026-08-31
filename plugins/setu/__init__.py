@@ -1,28 +1,43 @@
 import re
 from random import choice
 
-from nonebot.params import ArgPlainText
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, ActionFailed, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import (
+    ActionFailed,
+    Bot,
+    GroupMessageEvent,
+    MessageEvent,
+    MessageSegment,
+)
 from nonebot.adapters.onebot.v11.helpers import Cooldown
+from nonebot.params import ArgPlainText
 
 from ATRI import IMG_DIR
 from ATRI.service import Service
-from ATRI.utils.img_editor import get_image_bytes
 from ATRI.system.lkbot.util import lk_util
+from ATRI.utils.img_editor import get_image_bytes
 
 from .data_source import Setu
 
-plugin = Service("涩图").document("hso!").main_cmd("/setu").type(Service.ServiceType.ENTERTAINMENT).version("1.1.2")
+plugin = Service("涩图", "hso!", "1.1.3", Service.ServiceType.ENTERTAINMENT).main_cmd(
+    "setu"
+)
 
 random_setu = plugin.on_command(
-    "来张涩图", "来张随机涩图，冷却2分钟", aliases={"涩图来", "来点涩图", "来份涩图"}, priority=5
+    "来张涩图",
+    "来张随机涩图，冷却2分钟",
+    aliases={"涩图来", "来点涩图", "来份涩图"},
+    priority=5,
 )
 
 
 @random_setu.handle([Cooldown(120, prompt="2分钟冷却中")])
 async def _(bot: Bot, event: MessageEvent):
-    if isinstance(event, GroupMessageEvent) and lk_util.is_safe_mode_group(event.group_id):
-        await random_setu.finish(MessageSegment.image(get_image_bytes(f'{IMG_DIR}/damiesese.jpg')))
+    if isinstance(event, GroupMessageEvent) and lk_util.is_safe_mode_group(
+        event.group_id
+    ):
+        await random_setu.finish(
+            MessageSegment.image(get_image_bytes(f"{IMG_DIR}/damiesese.jpg"))
+        )
     setu, setu_data = await Setu.new()
     setu_info = f"Title: {setu_data.title}\nPid: {setu_data.pid}"
     await bot.send(event, setu_info)
@@ -43,13 +58,19 @@ async def _(think: str = ArgPlainText("r_rush_after_think")):
         await random_setu.finish(is_repo)
 
 
-tag_setu = plugin.on_regex(r"来[张点丶份](.*?)的?[涩色🐍]图", "根据提供的tag查找涩图，冷却2分钟", priority=6)
+tag_setu = plugin.on_regex(
+    r"来[张点丶份](.*?)的?[涩色🐍]图", "根据提供的tag查找涩图，冷却2分钟", priority=6
+)
 
 
 @tag_setu.handle([Cooldown(120, prompt="2分钟冷却中")])
 async def _(bot: Bot, event: MessageEvent):
-    if isinstance(event, GroupMessageEvent) and lk_util.is_safe_mode_group(event.group_id):
-        await tag_setu.finish(MessageSegment.image(get_image_bytes(f'{IMG_DIR}/damiesese.jpg')))
+    if isinstance(event, GroupMessageEvent) and lk_util.is_safe_mode_group(
+        event.group_id
+    ):
+        await tag_setu.finish(
+            MessageSegment.image(get_image_bytes(f"{IMG_DIR}/damiesese.jpg"))
+        )
     msg = str(event.get_message()).strip()
     pattern = r"来[张点丶份](.*?)的?[涩色🐍]图"
     tag = re.findall(pattern, msg)[0]
@@ -83,17 +104,22 @@ _nope_patt = r"不够[涩色]|就这|不行|不彳亍|一般|这也[是叫算]|[
 _again_patt = r"再来一张|不够"
 
 _nice_repo = ["w", "好诶！", "ohh", "(///w///)", "🥵", "我也"]
-_nope_repo = ["那你来发", "爱看不看", "你看不看吧", "看这种类型的涩图，是一件多么美妙的事情"]
+_nope_repo = [
+    "那你来发",
+    "爱看不看",
+    "你看不看吧",
+    "看这种类型的涩图，是一件多么美妙的事情",
+]
 _again_repo = ["没了...", "自己找去"]
 
 
 def will_think(msg: str) -> str:
     if msg in _ag_l:
-        return str()
+        return ""
 
     ag_jud = re.findall(_ag_patt, msg)
     if ag_jud:
-        return str()
+        return ""
 
     nice_jud = re.findall(_nice_patt, msg)
     nope_jud = re.findall(_nope_patt, msg)
@@ -106,4 +132,4 @@ def will_think(msg: str) -> str:
     elif again_jud:
         return choice(_again_repo)
     else:
-        return str()
+        return ""

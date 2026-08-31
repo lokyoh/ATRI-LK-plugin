@@ -1,14 +1,14 @@
 import os
 from datetime import date, datetime, time, timedelta
 from random import choice
-from typing import List
+from typing import ClassVar
 
 import aiofiles
 from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
-from nonebot.adapters.onebot.v11.helpers import Cooldown
+from nonebot.adapters.onebot.v11.helpers import Cooldown, CooldownIsolateLevel
 from nonebot.exception import ActionFailed
 
 from ATRI import TEMP_DIR
@@ -22,7 +22,7 @@ from ATRI.utils import request
 from ATRI.utils.img_editor import get_image_bytes
 from ATRI.utils.model import BaseModel
 
-plugin = Service("每日新闻", "每日新闻订阅服务", "1.5.1", Service.ServiceType.FUNCTION)
+plugin = Service("每日新闻", "每日新闻订阅服务", "1.5.2", Service.ServiceType.FUNCTION)
 
 _lmt_notice = [
     "慢...慢一..点❤",
@@ -35,7 +35,7 @@ _lmt_notice = [
 
 
 class DailyNewsConfig(BaseModel):
-    groups: List[str] = []
+    groups: ClassVar[list[str]] = []
     hour: int = 8
     minute: int = 0
     url: str = "https://60s.viki.moe/v2/60s"
@@ -47,7 +47,7 @@ config = config_manage.config()
 today_news = plugin.on_command(cmd="今日新闻", docs="查看今日新闻")
 
 
-@today_news.handle([Cooldown(60 * 60, prompt=choice(_lmt_notice))])
+@today_news.handle([Cooldown(60, prompt=choice(_lmt_notice), isolate_level=CooldownIsolateLevel.GROUP_USER)])
 async def _():
     _, news = await get_news(False)
     try:
@@ -137,6 +137,8 @@ async def get_news(task: bool = True) -> tuple[bool, MessageSegment]:
             resp = await request.get(config.url)
             resp.raise_for_status()
             url_json = resp.json()
+            if url_json["data"]["date"] != get_now_date().strftime("%Y-%m-%d"):
+                break
             image_url = str(url_json["data"]["image"])
             resp = await request.get(image_url)
             resp.raise_for_status()

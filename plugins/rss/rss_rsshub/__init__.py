@@ -1,23 +1,23 @@
 import asyncio
-from tabulate import tabulate
-from datetime import datetime, timedelta, timezone as tz
+from datetime import datetime, timedelta
+from datetime import timezone as tz
 
 from apscheduler.triggers.base import BaseTrigger
 from apscheduler.triggers.combining import AndTrigger
 from apscheduler.triggers.interval import IntervalTrigger
-
 from nonebot import get_bot
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 from nonebot.matcher import Matcher
-from nonebot.params import CommandArg, ArgPlainText
+from nonebot.params import ArgPlainText, CommandArg
 from nonebot.permission import Permission
-from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
+from tabulate import tabulate
 
 from ATRI.log import log
-from ATRI.service import Service
-from ATRI.permission import ADMIN
-from ATRI.utils import TimeDealer
 from ATRI.message import MessageBuilder
-from ATRI.utils.apscheduler import scheduler
+from ATRI.permission import ADMIN
+from ATRI.scheduler import scheduler
+from ATRI.service import Service
+from ATRI.utils import TimeDealer
 
 from .data_source import RssHubSubscriptor
 from .model import RssRsshubSubcription
@@ -60,7 +60,7 @@ async def _(event: GroupMessageEvent):
     if not query_result:
         await del_sub.finish("本群还没有任何订阅呢...")
 
-    subs = list()
+    subs = []
     for i in query_result:
         subs.append([i._id, i.title])
 
@@ -92,7 +92,7 @@ async def _(event: GroupMessageEvent):
     if not query_result:
         await get_sub_list.finish("本群还没有任何订阅呢...")
 
-    subs = list()
+    subs = []
     for i in query_result:
         t = i.update_time.replace(tzinfo=tz(timedelta(hours=8)))
         subs.append([t, i.title])

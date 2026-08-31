@@ -1,11 +1,11 @@
 from random import choice
 
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, MessageSegment
-from nonebot.adapters.onebot.v11.helpers import extract_image_urls, Cooldown
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11.helpers import Cooldown, extract_image_urls
 
-from ATRI.service import Service
-from ATRI.utils import request, Translate
 from ATRI.exceptions import RequestError
+from ATRI.service import Service
+from ATRI.utils import Translate, request
 
 __TRACE_URL = "https://api.trace.moe/search?anilistInfo=true"
 __FLMT_NOTICE = choice(["慢...慢一..点❤", "冷静1下", "歇会歇会~~"])
@@ -16,7 +16,6 @@ class Anime:
         self.img = img
 
     async def _request(self, url: str) -> dict:
-        global __TRACE_URL
         try:
             resp = await request.get(url)
             image_bytes = resp.read()
@@ -35,9 +34,9 @@ class Anime:
         except Exception:
             return "没有相似的结果呢..."
 
-        d = dict()
+        d = {}
         for i in range(3):
-            if data[i]["anilist"]["title"]["native"] in d.keys():
+            if data[i]["anilist"]["title"]["native"] in d:
                 d[data[i]["anilist"]["title"]["native"]][0] += data[i]["similarity"]
             else:
                 from_m = data[i]["from"] / 60
@@ -58,10 +57,8 @@ class Anime:
                 ]
 
         result = sorted(d.items(), key=lambda x: x[1], reverse=True)
-        t = 0
-        msg0 = str()
-        for i in result:
-            t += 1
+        msg0 = ""
+        for t, i in enumerate(result, start=1):
             s = "%.2f%%" % (i[1][0] * 100)
             msg0 = msg0 + (
                 "\n——————————\n"
@@ -73,8 +70,12 @@ class Anime:
         return msg0
 
 
-plugin = Service("以图搜番").document("通过一张图片搜索你需要的番！据说里*也可以").type(
-    Service.ServiceType.FUNCTION).version("1.0.0")
+plugin = Service(
+    "以图搜番",
+    "通过一张图片搜索你需要的番！据说里*也可以",
+    "1.0.0",
+    Service.ServiceType.FUNCTION,
+)
 
 anime_search = plugin.on_command("以图搜番", "发送一张图以搜索可能的番剧")
 

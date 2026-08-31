@@ -1,15 +1,15 @@
-from random import choice, randint
+from random import choice
 
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageEvent
+from nonebot.adapters.onebot.v11.helpers import Cooldown
 from nonebot.matcher import Matcher
 from nonebot.params import ArgPlainText, CommandArg
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, Message
-from nonebot.adapters.onebot.v11.helpers import Cooldown
 
 from ATRI.service import Service
 
 from .data_source import Funny
 
-plugin = Service("乐").document("乐1乐, 莫当真").type(Service.ServiceType.ENTERTAINMENT).version("1.0.0")
+plugin = Service("乐", "乐1乐, 莫当真", "1.0.1", Service.ServiceType.ENTERTAINMENT)
 
 get_laugh = plugin.on_command("来句笑话", "隐晦的笑话...")
 
@@ -23,7 +23,8 @@ async def _get_laugh(bot: Bot, event: MessageEvent):
 _fake_flmt_notice = choice(["慢...慢一..点❤", "冷静1下", "歇会歇会~~"])
 
 fake_msg = plugin.on_command(
-    "/fakemsg", "伪造假转发内容，格式：qq-name-content\n可构造多条，使用空格隔开，仅限群聊"
+    "fakemsg",
+    "伪造假转发内容，格式：qq-name-content\n可构造多条，使用空格隔开，仅限群聊",
 )
 
 
@@ -34,9 +35,11 @@ async def _ready_fake(matcher: Matcher, args: Message = CommandArg()):
         matcher.set_arg("content", args)
 
 
-@fake_msg.got("content", "内容呢？格式：qq-name-content\n可构造多条，以上仅为一条，使用空格隔开")
+@fake_msg.got(
+    "content", "内容呢？格式：qq-name-content\n可构造多条，以上仅为一条，使用空格隔开"
+)
 async def _deal_fake(
-        bot: Bot, event: GroupMessageEvent, content: str = ArgPlainText("content")
+    bot: Bot, event: GroupMessageEvent, content: str = ArgPlainText("content")
 ):
     group_id = event.group_id
     try:

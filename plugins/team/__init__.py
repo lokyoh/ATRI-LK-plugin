@@ -1,8 +1,5 @@
 from random import choice
 
-from ATRI.permission import ADMIN
-from ATRI.service import Service
-from ATRI.system.lkbot.util import lk_util
 from nonebot.adapters.onebot.v11 import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.adapters.onebot.v11.helpers import Cooldown
@@ -10,15 +7,15 @@ from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot.matcher import Matcher
 from nonebot.params import ArgPlainText, CommandArg
 
-plugin = (
-    Service("组队插件")
-    .document("l_o_o_k的组队插件")
-    .type(Service.ServiceType.FUNCTION)
-    .version("1.1.0")
-    .main_cmd("/team")
-)
+from ATRI.permission import ADMIN
+from ATRI.service import Service
+from ATRI.system.lkbot.util import lk_util
 
-from .team_data import check_manager, team_manager, time_type  # noqa: E402
+plugin = Service(
+    "组队插件", "l_o_o_k的组队插件", "1.1.1", Service.ServiceType.FUNCTION
+).main_cmd("team")
+
+from .team_data import check_manager, team_manager, time_type
 
 _lmt_notice = [
     "慢...慢一..点❤",
