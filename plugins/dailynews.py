@@ -1,7 +1,6 @@
 import os
 from datetime import date, datetime, time, timedelta
 from random import choice
-from typing import ClassVar
 
 import aiofiles
 from nonebot import get_bots
@@ -10,6 +9,7 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.adapters.onebot.v11.helpers import Cooldown, CooldownIsolateLevel
 from nonebot.exception import ActionFailed
+from pydantic import Field
 
 from ATRI import TEMP_DIR
 from ATRI.bot.utils import BotUtils
@@ -22,7 +22,7 @@ from ATRI.utils import request
 from ATRI.utils.img_editor import get_image_bytes
 from ATRI.utils.model import BaseModel
 
-plugin = Service("每日新闻", "每日新闻订阅服务", "1.5.2", Service.ServiceType.FUNCTION)
+plugin = Service("每日新闻", "每日新闻订阅服务", "1.5.3", Service.ServiceType.FUNCTION)
 
 _lmt_notice = [
     "慢...慢一..点❤",
@@ -35,7 +35,7 @@ _lmt_notice = [
 
 
 class DailyNewsConfig(BaseModel):
-    groups: ClassVar[list[str]] = []
+    groups: list[str] = Field(default_factory=list)
     hour: int = 8
     minute: int = 0
     url: str = "https://60s.viki.moe/v2/60s"
