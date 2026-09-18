@@ -107,7 +107,7 @@
     "每日新闻": {
         "path": "plugins.dailynews",
         "docs": "每日新闻订阅服务",
-        "version": "1.5.3",
+        "version": "1.6.0",
         "author": "l_o_o_k",
         "is_dir": false
     },
@@ -134,7 +134,7 @@
     "MC服务器": {
         "path": "plugins.mcserver",
         "docs": "查看MC服务器状态",
-        "version": "1.1.2",
+        "version": "1.2.0",
         "author": "l_o_o_k",
         "is_dir": true
     },

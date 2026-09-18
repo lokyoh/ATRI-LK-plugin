@@ -1,5 +1,5 @@
 import os
-from datetime import date, datetime, time, timedelta
+from datetime import time, timedelta
 from random import choice
 
 import aiofiles
@@ -19,10 +19,11 @@ from ATRI.log import log
 from ATRI.permission import ADMIN
 from ATRI.service import Service
 from ATRI.utils import request
+from ATRI.utils.datetime import fromtimestamp, now
 from ATRI.utils.img_editor import get_image_bytes
 from ATRI.utils.model import BaseModel
 
-plugin = Service("每日新闻", "每日新闻订阅服务", "1.5.3", Service.ServiceType.FUNCTION)
+plugin = Service("每日新闻", "每日新闻订阅服务", "1.6.0", Service.ServiceType.FUNCTION)
 
 _lmt_notice = [
     "慢...慢一..点❤",
@@ -47,7 +48,15 @@ config = config_manage.config()
 today_news = plugin.on_command(cmd="今日新闻", docs="查看今日新闻")
 
 
-@today_news.handle([Cooldown(60, prompt=choice(_lmt_notice), isolate_level=CooldownIsolateLevel.GROUP_USER)])
+@today_news.handle(
+    [
+        Cooldown(
+            60,
+            prompt=choice(_lmt_notice),
+            isolate_level=CooldownIsolateLevel.GROUP_USER,
+        )
+    ]
+)
 async def _():
     _, news = await get_news(False)
     try:
@@ -105,9 +114,7 @@ plugin.scheduler_jobs().add_job(
 
 
 def delay_task():
-    # if plugin.scheduler_jobs().has_job("新闻订阅延时"):
-    #     plugin.scheduler_jobs().remove_job("新闻订阅延时")
-    run_time = datetime.now() + timedelta(hours=4)
+    run_time = now() + timedelta(hours=4)
     if not (
         time(
             hour=(config.hour - 4) % 24,
@@ -119,16 +126,17 @@ def delay_task():
             minute=config.minute,
         )
     ):
-        plugin.scheduler_jobs().add_job(
-            daily_job, "新闻订阅延时", "date", run_date=run_time
-        )
+        scheduler_jobs = plugin.scheduler_jobs()
+        if scheduler_jobs.has_job("新闻订阅延时"):
+            scheduler_jobs.remove_job("新闻订阅延时")
+        scheduler_jobs.add_job(daily_job, "新闻订阅延时", "date", run_date=run_time)
 
 
 async def get_news(task: bool = True) -> tuple[bool, MessageSegment]:
     path = TEMP_DIR / "news.png"
     if (
         os.path.exists(path)
-        and date.fromtimestamp(os.path.getmtime(path)) == get_now_date()
+        and fromtimestamp(os.path.getmtime(path)) == get_now_date()
     ):
         return True, MessageSegment.image(get_image_bytes(path))
     retry = 0
@@ -155,9 +163,9 @@ async def get_news(task: bool = True) -> tuple[bool, MessageSegment]:
 
 
 def get_now_date():
-    now = datetime.now()
-    if now.hour < config.hour:
-        custom_date = now - timedelta(days=1)
+    _now = now()
+    if _now.hour < config.hour:
+        custom_date = _now - timedelta(days=1)
     else:
-        custom_date = now
+        custom_date = _now
     return custom_date.date()
