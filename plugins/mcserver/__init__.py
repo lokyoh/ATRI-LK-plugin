@@ -11,11 +11,11 @@ from .data_source import check_mc_status
 plugin = Service(
     "MC服务器",
     "查看MC服务器状态",
-    "1.2.0",
+    "1.2.1",
     Service.ServiceType.FUNCTION,
 )
 
-config: McServerConfig = plugin.add_plugin_config(McServerConfig).config
+config: McServerConfig = plugin.add_plugin_config(McServerConfig).config()
 
 mc = plugin.on_command(cmd="mc", docs="查看MINECRAFT服务器状态")
 
