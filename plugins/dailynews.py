@@ -9,11 +9,10 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.adapters.onebot.v11.helpers import Cooldown, CooldownIsolateLevel
 from nonebot.exception import ActionFailed
-from pydantic import Field
 
 from ATRI import TEMP_DIR
 from ATRI.bot.utils import BotUtils
-from ATRI.configs import PluginConfig
+from ATRI.configs import Field, PluginConfig
 from ATRI.exceptions import str_traceback
 from ATRI.log import log
 from ATRI.permission import ADMIN
@@ -21,9 +20,8 @@ from ATRI.service import Service
 from ATRI.utils import request
 from ATRI.utils.datetime import fromtimestamp, now
 from ATRI.utils.img_editor import get_image_bytes
-from ATRI.utils.model import BaseModel
 
-plugin = Service("每日新闻", "每日新闻订阅服务", "1.6.0", Service.ServiceType.FUNCTION)
+plugin = Service("每日新闻", "每日新闻订阅服务", "1.6.1", Service.ServiceType.FUNCTION)
 
 _lmt_notice = [
     "慢...慢一..点❤",
@@ -35,15 +33,14 @@ _lmt_notice = [
 ]
 
 
-class DailyNewsConfig(BaseModel):
-    groups: list[str] = Field(default_factory=list)
-    hour: int = 8
-    minute: int = 0
-    url: str = "https://60s.viki.moe/v2/60s"
+class DailyNewsConfig(PluginConfig):
+    groups = Field(list, [], "订阅群", item_type=str)
+    hour = Field(int, 8, "每日推送小时", min=0, max=23)
+    minute = Field(int, 0, "每日推送分钟", min=0, max=59)
+    url = Field(str, "https://60s.viki.moe/v2/60s", "新闻接口地址")
 
 
-config_manage = PluginConfig(plugin.service, DailyNewsConfig)
-config = config_manage.config()
+config: DailyNewsConfig = plugin.add_plugin_config(DailyNewsConfig)
 
 today_news = plugin.on_command(cmd="今日新闻", docs="查看今日新闻")
 
@@ -75,13 +72,14 @@ news_sub = plugin.on_command(
 @news_sub.handle()
 async def _(event: GroupMessageEvent):
     group_id = str(event.group_id)
-    if group_id in config.groups:
-        config.groups.remove(group_id)
-        config_manage.change_config(config)
+    groups = config.get("groups", [])
+    if group_id in groups:
+        groups.remove(group_id)
+        config.set("groups", groups)
         await news_sub.finish("本群每日新闻订阅已关闭")
     else:
-        config.groups.append(group_id)
-        config_manage.change_config(config)
+        groups.append(group_id)
+        config.set("groups", groups)
         await news_sub.finish("本群每日新闻订阅已开启")
 
 
@@ -92,7 +90,7 @@ async def daily_job():
             group_list = await bot.get_group_list()
             for group in group_list:
                 group_id = str(group["group_id"])
-                if group_id in config.groups:
+                if group_id in config.get("groups", []):
                     try:
                         await BotUtils.send_message(
                             bot=bot,
@@ -108,8 +106,8 @@ plugin.scheduler_jobs().add_job(
     daily_job,
     "新闻订阅",
     "cron",
-    hour=config.hour,
-    minute=config.minute,
+    hour=config.get("hour"),
+    minute=config.get("minute"),
 )
 
 
@@ -117,13 +115,13 @@ def delay_task():
     run_time = now() + timedelta(hours=4)
     if not (
         time(
-            hour=(config.hour - 4) % 24,
-            minute=config.minute,
+            hour=(config.get("hour") - 4) % 24,
+            minute=config.get("minute"),
         )
         <= run_time.time()
         <= time(
-            hour=(config.hour + 4) % 24,
-            minute=config.minute,
+            hour=(config.get("hour") + 4) % 24,
+            minute=config.get("minute"),
         )
     ):
         scheduler_jobs = plugin.scheduler_jobs()
@@ -134,15 +132,12 @@ def delay_task():
 
 async def get_news(task: bool = True) -> tuple[bool, MessageSegment]:
     path = TEMP_DIR / "news.png"
-    if (
-        os.path.exists(path)
-        and fromtimestamp(os.path.getmtime(path)) == get_now_date()
-    ):
+    if os.path.exists(path) and fromtimestamp(os.path.getmtime(path)) == get_now_date():
         return True, MessageSegment.image(get_image_bytes(path))
     retry = 0
     while retry < 3:
         try:
-            resp = await request.get(config.url)
+            resp = await request.get(config.get("url"))
             resp.raise_for_status()
             url_json = resp.json()
             if url_json["data"]["date"] != get_now_date().strftime("%Y-%m-%d"):
@@ -164,8 +159,5 @@ async def get_news(task: bool = True) -> tuple[bool, MessageSegment]:
 
 def get_now_date():
     _now = now()
-    if _now.hour < config.hour:
-        custom_date = _now - timedelta(days=1)
-    else:
-        custom_date = _now
+    custom_date = _now - timedelta(days=1) if _now.hour < config.get("hour") else _now
     return custom_date.date()

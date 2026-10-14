@@ -1,10 +1,9 @@
-from ATRI.configs import PluginConfig
-from ATRI.utils.model import BaseModel
+from ATRI.configs import Field, PluginConfig
 
 
-class Setu(BaseModel):
-    reverse_proxy: bool = True
-    reverse_proxy_domain: str = "i.pixiv.re"
+class SetuConfig(PluginConfig):
+    reverse_proxy = Field(bool, True, "启用反向代理")
+    reverse_proxy_domain = Field(str, "i.pixiv.re", "反向代理域名")
 
 
-config: Setu = PluginConfig("涩图", Setu).config()
+config: SetuConfig = SetuConfig("涩图")

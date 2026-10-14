@@ -1,9 +1,8 @@
-from ATRI.configs import PluginConfig
-from ATRI.utils.model import BaseModel
+from ATRI.configs import Field, PluginConfig
 
 
-class SauceNAO(BaseModel):
-    key: str
+class SauceNAOConfig(PluginConfig):
+    key = Field(str, "", "SauceNAO API Key", required=True)
 
 
-config: SauceNAO = PluginConfig("以图搜图", SauceNAO).config()
+config: SauceNAOConfig = SauceNAOConfig("以图搜图")

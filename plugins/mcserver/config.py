@@ -1,7 +1,11 @@
-from pydantic import Field
-
-from ATRI.utils.model import BaseModel
+from ATRI.configs import Field, PluginConfig
 
 
-class McServerConfig(BaseModel):
-    server_dict: dict[str, str] = Field(default_factory=dict[str, str])
+class McServerConfig(PluginConfig):
+    server_dict = Field(
+        dict,
+        {},
+        "服务器地址",
+        key_field=Field(str, "", "服务器名称"),
+        item_type=Field(str, "", "服务器IP地址"),
+    )

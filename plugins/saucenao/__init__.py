@@ -12,7 +12,7 @@ from .data_source import SauceNAO
 plugin = Service(
     "以图搜图",
     "以图搜图，仅限二刺螈",
-    "1.1.1",
+    "1.1.2",
     Service.ServiceType.FUNCTION,
 )
 
@@ -23,7 +23,8 @@ search = plugin.on_command("以图搜图", "透过一张图搜索可能的来源
 
 @search.got("img", "图呢？", [Cooldown(5, prompt=_search_flmt_notice)])
 async def _do_search(event: MessageEvent):
-    if not config.key:
+    api_key = config.get("key")
+    if not api_key:
         ServiceTools("以图搜图").service_controller(False)
         log.warning(
             "插件 以图搜图 所需的 key (SauceNAO) 未配置，将被全局禁用，后续填写请手动启用"
@@ -35,7 +36,7 @@ async def _do_search(event: MessageEvent):
         await search.reject("请发送图片而不是其他东西！！")
 
     try:
-        result = await SauceNAO(config.key).search(img[0])
+        result = await SauceNAO(api_key).search(img[0])
     except Exception as err:
         await search.finish(f"搜索失败：{err}")
 

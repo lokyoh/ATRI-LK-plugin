@@ -18,7 +18,7 @@ from ATRI.utils.img_editor import get_image_bytes
 
 from .data_source import Setu
 
-plugin = Service("涩图", "hso!", "1.1.3", Service.ServiceType.ENTERTAINMENT).main_cmd(
+plugin = Service("涩图", "hso!", "1.1.4", Service.ServiceType.ENTERTAINMENT).main_cmd(
     "setu"
 )
 
