@@ -9,7 +9,7 @@
     "b站动态订阅": {
         "path": "plugins.bilibili_dynamic",
         "docs": "b站动态订阅助手~",
-        "version": "1.2.0",
+        "version": "1.2.1",
         "author": "Kyomotoi,l_o_o_k",
         "is_dir": true
     },
