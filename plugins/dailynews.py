@@ -24,7 +24,7 @@ from ATRI.utils import request
 from ATRI.utils.datetime import fromtimestamp, now
 from ATRI.utils.img_editor import get_image_bytes
 
-plugin = Service("每日新闻", "每日新闻订阅服务", "1.7.0", Service.ServiceType.FUNCTION)
+plugin = Service("每日新闻", "每日新闻订阅服务", "1.7.1", Service.ServiceType.FUNCTION)
 
 _lmt_notice = [
     "慢...慢一..点❤",
@@ -177,7 +177,7 @@ async def get_news(task: bool = True, mtype: int = 0) -> tuple[bool, MessageSegm
             elif msg_type == "markdown":
                 lines = resp.text.rstrip().splitlines()
                 cleaned = "\n".join(lines[:-1])
-                return True, MessageSegment.image(await ATRIMessage(mtype).md(cleaned))
+                return True, await ATRIMessage(mtype).md(cleaned)
             return True, MessageSegment.text(text=resp.text)
         except Exception as e:
             log.warning(f"第{retry + 1}次获取新闻错误:\n{str_traceback(e)}")
