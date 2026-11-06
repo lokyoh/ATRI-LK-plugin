@@ -1,6 +1,5 @@
 import os
 from datetime import time, timedelta
-from random import choice
 
 import aiofiles
 from nonebot import get_bots
@@ -8,7 +7,6 @@ from nonebot.adapters import Bot
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot.adapters.onebot.v11.bot import Bot as OneBot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
-from nonebot.adapters.onebot.v11.helpers import Cooldown, CooldownIsolateLevel
 from nonebot.adapters.qq.bot import Bot as QQBot
 from nonebot.exception import ActionFailed
 
@@ -24,7 +22,7 @@ from ATRI.utils import request
 from ATRI.utils.datetime import fromtimestamp, now
 from ATRI.utils.img_editor import get_image_bytes
 
-plugin = Service("每日新闻", "每日新闻订阅服务", "1.7.1", Service.ServiceType.FUNCTION)
+plugin = Service("每日新闻", "每日新闻订阅服务", "1.7.2", Service.ServiceType.FUNCTION)
 
 _lmt_notice = [
     "慢...慢一..点❤",
@@ -58,15 +56,7 @@ config: DailyNewsConfig = plugin.add_plugin_config(DailyNewsConfig)
 today_news = plugin.on_command(cmd="今日新闻", docs="查看今日新闻")
 
 
-@today_news.handle(
-    [
-        Cooldown(
-            60,
-            prompt=choice(_lmt_notice),
-            isolate_level=CooldownIsolateLevel.GROUP_USER,
-        )
-    ]
-)
+@today_news.handle()
 async def _(bot: Bot):
     mtype = 1 if isinstance(bot, QQBot) else 0
     _, news = await get_news(False, mtype)
