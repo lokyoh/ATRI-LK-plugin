@@ -4,112 +4,144 @@
         "docs": "谁是卷王!",
         "version": "1.0.1",
         "author": "Kyomotoi",
-        "is_dir": true
+        "is_dir": true,
+        "type": "娱乐服务",
+        "framework": "0.25"
     },
     "b站动态订阅": {
         "path": "plugins.bilibili_dynamic",
         "docs": "b站动态订阅助手~",
         "version": "1.2.1",
         "author": "Kyomotoi,l_o_o_k",
-        "is_dir": true
+        "is_dir": true,
+        "type": "订阅服务",
+        "framework": "0.25"
     },
     "棋类游戏": {
         "path": "plugins.boardgame",
         "docs": "棋类游戏\n指令：\n@bot + “五子棋”、“黑白棋”、“围棋”开始一局游戏;\n再发送“落子 字母+数字”下棋，如“落子 A1”;\n发送“结束下棋”结束当前棋局",
         "version": "0.1.1",
         "author": "xipesoy",
-        "is_dir": true
+        "is_dir": true,
+        "type": "游戏服务",
+        "framework": "0.25"
     },
     "乐": {
         "path": "plugins.funny",
         "docs": "乐1乐, 莫当真",
         "version": "1.0.1",
         "author": "Kyomotoi",
-        "is_dir": true
+        "is_dir": true,
+        "type": "娱乐服务",
+        "framework": "0.25"
     },
     "kimo": {
         "path": "plugins.kimo",
         "docs": "好像有点涩?",
         "version": "1.0.1",
         "author": "Kyomotoi",
-        "is_dir": true
+        "is_dir": true,
+        "type": "娱乐服务",
+        "framework": "0.25"
     },
     "拍立得": {
         "path": "plugins.polaroid",
         "docs": "根据头像生成拍立得风格照片！",
         "version": "1.0.2",
         "author": "Kyomotoi",
-        "is_dir": true
+        "is_dir": true,
+        "type": "娱乐服务",
+        "framework": "0.25"
     },
     "rss.mikan": {
         "path": "plugins.rss.rss_mikanan",
         "docs": "Rss的mikan支持",
         "version": "1.1.1",
         "author": "Kyomotoi",
-        "is_dir": true
+        "is_dir": true,
+        "type": "订阅服务",
+        "framework": "0.25"
     },
     "rss.rsshub": {
         "path": "plugins.rss.rss_rsshub",
         "docs": "Rss的Rsshub支持",
         "version": "1.1.1",
         "author": "Kyomotoi",
-        "is_dir": true
+        "is_dir": true,
+        "type": "订阅服务",
+        "framework": "0.25"
     },
     "以图搜图": {
         "path": "plugins.saucenao",
         "docs": "以图搜图，仅限二刺螈",
         "version": "1.1.2",
         "author": "Kyomotoi",
-        "is_dir": true
+        "is_dir": true,
+        "type": "功能性服务",
+        "framework": "0.25"
     },
     "涩图": {
         "path": "plugins.setu",
         "docs": "hso!",
         "version": "1.1.4",
         "author": "Kyomotoi,l_o_o_k",
-        "is_dir": true
+        "is_dir": true,
+        "type": "娱乐服务",
+        "framework": "0.25"
     },
     "组队插件": {
         "path": "plugins.team",
         "docs": "l_o_o_k的组队插件",
         "version": "1.1.1",
         "author": "l_o_o_k",
-        "is_dir": true
+        "is_dir": true,
+        "type": "功能性服务",
+        "framework": "0.25"
     },
     "词库管理": {
         "path": "plugins.thesaurus",
         "docs": "支持模糊匹配、全匹配、正则的自定义回复~\n支持分群、全局管理, 支持群内投票添加",
         "version": "1.2.3",
         "author": "Kyomotoi",
-        "is_dir": true
+        "is_dir": true,
+        "type": "功能性服务",
+        "framework": "0.25"
     },
     "小工具": {
         "path": "plugins.util",
         "docs": "非常实用(?)的工具们!",
         "version": "1.0.2",
         "author": "Kyomotoi",
-        "is_dir": true
+        "is_dir": true,
+        "type": "娱乐服务",
+        "framework": "0.25"
     },
     "以图搜番": {
         "path": "plugins.anime_search",
         "docs": "通过一张图片搜索你需要的番！据说里*也可以",
         "version": "1.0.0",
         "author": "Kyomotoi",
-        "is_dir": false
+        "is_dir": false,
+        "type": "功能性服务",
+        "framework": "0.25"
     },
     "coser": {
         "path": "plugins.coser",
         "docs": "三次元也不戳，嘿嘿嘿",
         "version": "1.0.3",
         "author": "l_o_o_k",
-        "is_dir": false
+        "is_dir": false,
+        "type": "娱乐服务",
+        "framework": "0.25"
     },
     "每日新闻": {
         "path": "plugins.dailynews",
         "docs": "每日新闻订阅服务",
         "version": "1.7.2",
         "author": "l_o_o_k",
-        "is_dir": false
+        "is_dir": false,
+        "type": "功能性服务",
+        "framework": "0.25"
     },
     "钉宫语录": {
         "path": "plugins.dinggong",
@@ -119,7 +151,9 @@
         "is_dir": false,
         "res": [
             "res/record/dinggong"
-        ]
+        ],
+        "type": "娱乐服务",
+        "framework": "0.25"
     },
     "每日发癫": {
         "path": "plugins.fadian",
@@ -129,14 +163,19 @@
         "is_dir": false,
         "res": [
             "res/text/fa_dian.json"
-        ]
+        ],
+        "type": "娱乐服务",
+        "framework": "0.25",
+        "lkapi": 2
     },
     "MC服务器": {
         "path": "plugins.mcserver",
         "docs": "查看MC服务器状态",
         "version": "1.2.2",
         "author": "l_o_o_k",
-        "is_dir": true
+        "is_dir": true,
+        "type": "功能性服务",
+        "framework": "0.25"
     },
     "舔狗日记": {
         "path": "plugins.tiangou",
@@ -146,32 +185,43 @@
         "is_dir": false,
         "res": [
             "res/text/tiangou.txt"
-        ]
+        ],
+        "type": "娱乐服务",
+        "framework": "0.25"
     },
     "J漫画": {
         "path": "plugins.jmcomic",
         "docs": "发送J漫画",
         "version": "0.1.0",
         "author": "l_o_o_k",
-        "is_dir": true
+        "is_dir": true,
+        "type": "功能性服务",
+        "lkapi": 2,
+        "framework": "0.25"
     },
     "点歌": {
         "path": "plugins.music",
         "docs": "点歌插件",
         "version": "0.2.2",
         "author": "l_o_o_k",
-        "is_dir": false
+        "is_dir": false,
+        "type": "娱乐服务",
+        "framework": "0.25"
     },
     "HelloWorld": {
         "repo": "https://github.com/lokyoh/atrilk_plugin_helloworld",
         "docs": "一个ATRI-LK插件示例模板。",
         "version": "github",
-        "author": "l_o_o_k"
+        "author": "l_o_o_k",
+        "type": "其他服务",
+        "framework": "0.25"
     },
     "小程序解析": {
         "repo": "https://github.com/lokyoh/atrilk_plugin_card_analysis",
         "docs": "解析QQ小程序卡片。",
         "version": "github",
-        "author": "l_o_o_k"
+        "author": "l_o_o_k",
+        "type": "功能性服务",
+        "framework": "0.25"
     }
 }
