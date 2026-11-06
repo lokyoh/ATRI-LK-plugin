@@ -4,10 +4,12 @@ from random import choice
 
 import aiofiles
 from nonebot import get_bots
+from nonebot.adapters import Bot
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
-from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.bot import Bot as OneBot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.adapters.onebot.v11.helpers import Cooldown, CooldownIsolateLevel
+from nonebot.adapters.qq.bot import Bot as QQBot
 from nonebot.exception import ActionFailed
 
 from ATRI import TEMP_DIR
@@ -15,13 +17,14 @@ from ATRI.bot.utils import BotUtils
 from ATRI.configs import Field, PluginConfig
 from ATRI.exceptions import str_traceback
 from ATRI.log import log
+from ATRI.message import ATRIMessage
 from ATRI.permission import ADMIN
 from ATRI.service import Service
 from ATRI.utils import request
 from ATRI.utils.datetime import fromtimestamp, now
 from ATRI.utils.img_editor import get_image_bytes
 
-plugin = Service("每日新闻", "每日新闻订阅服务", "1.6.1", Service.ServiceType.FUNCTION)
+plugin = Service("每日新闻", "每日新闻订阅服务", "1.7.0", Service.ServiceType.FUNCTION)
 
 _lmt_notice = [
     "慢...慢一..点❤",
@@ -34,6 +37,16 @@ _lmt_notice = [
 
 
 class DailyNewsConfig(PluginConfig):
+    msg_type = Field(
+        str,
+        "image",
+        "新闻展示类型(仅支持OneBot协议)",
+        options=[
+            {"label": "图片", "value": "image"},
+            {"label": "Markdown图片", "value": "markdown"},
+            {"label": "文本", "value": "text"},
+        ],
+    )
     groups = Field(list, [], "订阅群", item_type=str)
     hour = Field(int, 8, "每日推送小时", min=0, max=23)
     minute = Field(int, 0, "每日推送分钟", min=0, max=59)
@@ -54,8 +67,9 @@ today_news = plugin.on_command(cmd="今日新闻", docs="查看今日新闻")
         )
     ]
 )
-async def _():
-    _, news = await get_news(False)
+async def _(bot: Bot):
+    mtype = 1 if isinstance(bot, QQBot) else 0
+    _, news = await get_news(False, mtype)
     try:
         await today_news.finish(news)
     except ActionFailed:
@@ -86,7 +100,7 @@ async def _(event: GroupMessageEvent):
 async def daily_job():
     _, message = await get_news()
     for bot in get_bots().values():
-        if type(bot) is Bot:
+        if type(bot) is OneBot:
             group_list = await bot.get_group_list()
             for group in group_list:
                 group_id = str(group["group_id"])
@@ -130,25 +144,41 @@ def delay_task():
         scheduler_jobs.add_job(daily_job, "新闻订阅延时", "date", run_date=run_time)
 
 
-async def get_news(task: bool = True) -> tuple[bool, MessageSegment]:
+async def get_news(task: bool = True, mtype: int = 0) -> tuple[bool, MessageSegment]:
     path = TEMP_DIR / "news.png"
     if os.path.exists(path) and fromtimestamp(os.path.getmtime(path)) == get_now_date():
         return True, MessageSegment.image(get_image_bytes(path))
     retry = 0
     while retry < 3:
         try:
-            resp = await request.get(config.get("url"))
+            news_url = config.get("url")
+            if mtype == 1:
+                msg_type = "markdown"
+                news_url += "?encoding=markdown"
+            else:
+                msg_type = config.get("msg_type")
+                if msg_type == "markdown":
+                    news_url += "?encoding=markdown"
+                elif msg_type == "text":
+                    news_url += "?encoding=text"
+            resp = await request.get(news_url)
             resp.raise_for_status()
-            url_json = resp.json()
-            if url_json["data"]["date"] != get_now_date().strftime("%Y-%m-%d"):
-                break
-            image_url = str(url_json["data"]["image"])
-            resp = await request.get(image_url)
-            resp.raise_for_status()
-            content = resp.content
-            async with aiofiles.open(path, "wb") as wf:
-                await wf.write(content)
-            return True, MessageSegment.image(get_image_bytes(path))
+            if msg_type == "image":
+                url_json = resp.json()
+                if url_json["data"]["date"] != get_now_date().strftime("%Y-%m-%d"):
+                    break
+                image_url = str(url_json["data"]["image"])
+                resp = await request.get(image_url)
+                resp.raise_for_status()
+                content = resp.content
+                async with aiofiles.open(path, "wb") as wf:
+                    await wf.write(content)
+                return True, MessageSegment.image(get_image_bytes(path))
+            elif msg_type == "markdown":
+                lines = resp.text.rstrip().splitlines()
+                cleaned = "\n".join(lines[:-1])
+                return True, MessageSegment.image(await ATRIMessage(mtype).md(cleaned))
+            return True, MessageSegment.text(text=resp.text)
         except Exception as e:
             log.warning(f"第{retry + 1}次获取新闻错误:\n{str_traceback(e)}")
             retry += 1
