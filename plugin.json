@@ -137,7 +137,7 @@
     "每日新闻": {
         "path": "plugins.dailynews",
         "docs": "每日新闻订阅服务",
-        "version": "1.7.2",
+        "version": "1.7.3",
         "author": "l_o_o_k",
         "is_dir": false,
         "type": "功能性服务",

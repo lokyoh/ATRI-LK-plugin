@@ -4,7 +4,7 @@ from datetime import time, timedelta
 import aiofiles
 from nonebot import get_bots
 from nonebot.adapters import Bot
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.adapters.onebot.v11.bot import Bot as OneBot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.adapters.qq.bot import Bot as QQBot
@@ -22,16 +22,7 @@ from ATRI.utils import request
 from ATRI.utils.datetime import fromtimestamp, now
 from ATRI.utils.img_editor import get_image_bytes
 
-plugin = Service("每日新闻", "每日新闻订阅服务", "1.7.2", Service.ServiceType.FUNCTION)
-
-_lmt_notice = [
-    "慢...慢一..点❤",
-    "冷静1下",
-    "歇会歇会~~",
-    "呜呜...别急",
-    "太快了...受不了",
-    "不要这么快呀",
-]
+plugin = Service("每日新闻", "每日新闻订阅服务", "1.7.3", Service.ServiceType.FUNCTION)
 
 
 class DailyNewsConfig(PluginConfig):
@@ -100,7 +91,7 @@ async def daily_job():
                             bot=bot,
                             service="每日新闻",
                             group_id=group_id,
-                            message=Message().append(message),
+                            message=message,
                         )
                     except ActionFailed:
                         log.warning(f"发送每日新闻至 {group_id} 失败")
